@@ -1,3 +1,20 @@
+:root {
+  --light-blue: #E8EBFF;
+}
+
+footer {
+  margin-top: auto;
+  background-color: var(--light-blue);
+}
+.footer-container {
+  padding: 40px 0;
+  display: flex;
+  justify-content: space-evenly;
+}
+.footer-copyright {
+  color: gray;
+}
+
 .content {
   width: 100%;
   height: 100vh;
@@ -11,7 +28,7 @@
   display: flex;
   flex-direction: column;
   justify-content: start;
-  background-color: #E8EBFF;
+  background-color: var(--light-blue);
   padding: 80px 120px;
   border-radius: 40px;
   box-shadow: 6px 6px 3px rgba(0, 0, 0, 0.25);
