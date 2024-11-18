@@ -118,3 +118,22 @@ footer {
 .link {
   text-decoration: none;
 }
+
+.main {
+  margin-top: 48px;
+}
+.container {
+  padding: 50px 10%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+.location-rating {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-weight: bold;
+  background-color: #fff;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
