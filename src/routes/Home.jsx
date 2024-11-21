@@ -37,7 +37,7 @@ export default function Home(params) {
   return (
     <>
       <div className="main">
-        <div className="container">
+        <div className="card-grid">
           {locations.map((l, i) => (
             <LocationCard
               id={i}

@@ -6,7 +6,7 @@ export default function Layout(params) {
   return (
     <>
       <Header />
-      <div>
+      <div style={{marginTop: "48px"}}>
         {cloneElement(params.children)}
       </div>
       <Footer />
