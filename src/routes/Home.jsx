@@ -1,6 +1,8 @@
+import { useNavigate } from "react-router-dom"
 import LocationCard from "../components/LocationCard"
 
 export default function Home(params) {
+  const nav = useNavigate();
   const locations = [
     {
       image: "charyn.jpg",
@@ -45,6 +47,7 @@ export default function Home(params) {
               name={l.name} 
               agency={l.agency} 
               rating={l.rating} 
+              nav={nav}
               key={i}
             />
           ))}

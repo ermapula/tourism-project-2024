@@ -1,10 +1,11 @@
 import { Divider, Stack, Typography } from "@mui/material";
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import TourCard from "../components/TourCard";
 import { Place } from "@mui/icons-material";
 
 export default function Location(params) {
   const { id } = useParams();
+  const nav = useNavigate();
 
   const data = {
     image: "/locations/charyn.jpg",
@@ -56,6 +57,7 @@ export default function Location(params) {
                     name={t.name} 
                     agency={t.agency} 
                     rating={t.rating} 
+                    nav={nav}
                     key={i}
                   />
                 ))}

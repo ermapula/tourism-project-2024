@@ -1,10 +1,7 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { Star } from "@mui/icons-material";
 
-export default function LocationCard({id, image, name, agency, rating}) {
-  const nav = useNavigate();
-
+export default function LocationCard({id, image, name, agency, rating, nav}) {
   return (
     <Card className="location-card">
       <CardActionArea onClick={() => {nav(`/locations/${id}`)}}>
