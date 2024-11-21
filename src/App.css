@@ -150,9 +150,14 @@ footer {
   object-fit: cover;
   border-radius: 20px;
 }
-.location-text {
-  /* display: flex;
-  flex-direction: column; */
+.tour-text {
+  position: relative;
+}
+.tour-rating {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
 }
 .location-address {
   display: flex;

@@ -4,6 +4,7 @@ import Login from "./routes/auth/Login";
 import Register from "./routes/auth/Register";
 import Layout from "./components/Layout";
 import Location from "./routes/Location";
+import Tour from "./routes/Tour";
 
 
 
@@ -28,6 +29,13 @@ const router = createBrowserRouter([
     element: 
       <Layout>
         <Location />
+      </Layout>
+  },
+  {
+    path: "/tours/:id",
+    element: 
+      <Layout>
+        <Tour />
       </Layout>
   },
 ])
