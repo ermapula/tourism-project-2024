@@ -1,4 +1,5 @@
-import { Person, PersonOutline, ReceiptLongOutlined } from "@mui/icons-material";
+import { PersonOutline, ReceiptLongOutlined } from "@mui/icons-material";
+import { Avatar } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
 
 export default function Profile(params) {
@@ -6,10 +7,10 @@ export default function Profile(params) {
     <div className="profile-page">
       <div className="profile-side">
         <div className="profile">
-          <div className="user-pfp">
-            <Person sx={{fontSize: 40}} />
-            {/* <img className="user-pfp" src="../locations/charyn.jpg" alt="" /> */}
-          </div>
+          <Avatar 
+            // src={}
+            sx={{ width: 60, height: 60}}
+          />
           <div className="user-name">
             Firstname Lastname
           </div>
@@ -25,7 +26,7 @@ export default function Profile(params) {
           </Link>
         </div>
       </div>
-      <div>
+      <div className="profile-main">
         <Outlet />
       </div>
     </div>

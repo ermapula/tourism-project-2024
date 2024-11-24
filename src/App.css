@@ -177,7 +177,7 @@ footer {
   flex-direction: column;
   gap: 20px;
 }
-.profile-side > div {
+.profile-side > div, .profile-main {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
   border-radius: 20px;
 }
@@ -213,4 +213,7 @@ footer {
 }
 .p-nav-link:hover {
   background-color: rgba(0, 0, 0, 0.1);
+}
+.profile-main {
+  padding: 20px 40px;
 }
