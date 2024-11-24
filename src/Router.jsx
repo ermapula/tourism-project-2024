@@ -5,6 +5,9 @@ import Register from "./routes/auth/Register";
 import Layout from "./components/Layout";
 import Location from "./routes/Location";
 import Tour from "./routes/Tour";
+import Profile from "./routes/profile/Profile";
+import Personal from "./routes/profile/Personal";
+import Orders from "./routes/profile/Orders";
 
 
 
@@ -28,6 +31,24 @@ const router = createBrowserRouter([
       {
         path: "tours/:id",
         element: <Tour />
+      },
+      {
+        path: "profile",
+        element: <Profile />,
+        children: [
+          { 
+            index: true,
+            element: <Personal />
+          },
+          { 
+            path: "personal",
+            element: <Personal />
+          },
+          { 
+            path: "orders",
+            element: <Orders />
+          },
+        ]
       },
     ]
   },

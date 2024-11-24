@@ -164,3 +164,53 @@ footer {
   align-items: center;
   margin-bottom: 10px;
 }
+
+.profile-page {
+  padding: 30px 5%;
+  
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+}
+.profile-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.profile-side > div {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
+}
+.profile {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.user-pfp {
+  border-radius: 40px;
+  background-color: rgb(204, 204, 204);
+  height: 60px;
+  width: 60px;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+.p-nav-link {
+  color: #000;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 20px;
+  transition: background-color 100ms;
+}
+.p-nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}

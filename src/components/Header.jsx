@@ -9,6 +9,7 @@ export default function Header(params) {
       <nav className="nav">
         <div className="nav-left">
           <Link to='/' className="nav-link">Home</Link>
+          <Link to='/profile' className="nav-link">Profile</Link>
         </div>
         <div className="nav-right">
           <Paper
