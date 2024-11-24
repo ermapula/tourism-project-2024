@@ -11,10 +11,25 @@ import Tour from "./routes/Tour";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: 
-      <Layout>
-        <Home />
-      </Layout>
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <Home />
+      },
+      {
+        path: "",
+        element: <Home />
+      },
+      {
+        path: "locations/:id",
+        element: <Location />
+      },
+      {
+        path: "tours/:id",
+        element: <Tour />
+      },
+    ]
   },
   {
     path: "/login",
@@ -23,20 +38,6 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />
-  },
-  {
-    path: "/locations/:id",
-    element: 
-      <Layout>
-        <Location />
-      </Layout>
-  },
-  {
-    path: "/tours/:id",
-    element: 
-      <Layout>
-        <Tour />
-      </Layout>
   },
 ])
 
