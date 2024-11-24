@@ -15,7 +15,10 @@ const style = {
 
 export default function Footer(params) {
   const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = (e) => {
+    e.preventDefault();
+    setOpen(true);
+  }
   const handleClose = () => setOpen(false);
 
   return (
@@ -24,8 +27,6 @@ export default function Footer(params) {
       <Modal
         open={open}
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
