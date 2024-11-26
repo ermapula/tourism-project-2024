@@ -8,6 +8,9 @@ import Tour from "./routes/Tour";
 import Profile from "./routes/profile/Profile";
 import Personal from "./routes/profile/Personal";
 import Orders from "./routes/profile/Orders";
+import Admin from "./routes/admin/Admin";
+import LocationsAdmin from "./routes/admin/LocationsAdmin";
+import ToursAdmin from "./routes/admin/ToursAdmin";
 
 
 
@@ -59,6 +62,24 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />
+  },
+  {
+    path: "admin",
+    element: <Admin />,
+    children: [
+      { 
+        index: true,
+        element: <LocationsAdmin />
+      },
+      { 
+        path: "locations",
+        element: <LocationsAdmin />
+      },
+      { 
+        path: "tours",
+        element: <ToursAdmin />
+      },
+    ]
   },
 ])
 
