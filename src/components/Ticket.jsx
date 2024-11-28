@@ -1,8 +1,9 @@
-import { Box, Divider, Stack, Typography } from "@mui/material";
+import { Box, Card, Divider, Stack, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export default function Ticket({ticket}) {
   return (
-    <Box
+    <Card
       sx={{
         backgroundColor: "#E8EBFF",
         borderRadius: 2,
@@ -31,19 +32,32 @@ export default function Ticket({ticket}) {
           component="img"
           src="../tours/charyn.jpg"
           sx={{width: "150px", borderRadius: 2 }}
-        ></Box>
-        <Typography
-          variant="h5"
-        >
-          Tour: {ticket.tour}
-        </Typography>
+        />
+        <Box>
+          <Typography
+            variant="h5"
+          >
+            Tour: {ticket.tour}
+          </Typography>
+          <Typography
+            variant="h5"
+          >
+            For: {ticket.name}
+          </Typography>
+          <Typography
+            component={Link}
+            to={`/tours/${ticket.tour_id}`}
+          >
+            Tour page 
+          </Typography>
+        </Box>
         <Typography
           variant="body"
           
           sx={{marginLeft: "auto"}}
           
         >
-          Tour: {ticket.tour}
+          Tickets x{ticket.quantity}
         </Typography>
       </Stack>
       <Divider sx={{marginTop: 2, marginBottom: 2}}/> 
@@ -51,8 +65,8 @@ export default function Ticket({ticket}) {
         variant="h6"
         sx={{placeSelf: "end"}}
       >
-        Total price: {ticket.price}
+        Total price: &#8376;{ticket.price}
       </Typography>
-    </Box>
+    </Card>
   ) 
 }

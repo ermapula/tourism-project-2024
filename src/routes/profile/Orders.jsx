@@ -6,7 +6,10 @@ export default function Orders(params) {
     id: 0,
     date: "1.01.2024",
     tour: "Tour name",
-    price: 100
+    price: 123,
+    quantity: 1,
+    name: "Name",
+    tour_id: 0
   }
   return (
     <>
