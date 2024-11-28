@@ -1,5 +1,5 @@
-import { Delete } from "@mui/icons-material";
-import { Box, Button, Checkbox, IconButton, Paper, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Toolbar, Tooltip, Typography } from "@mui/material";
+import { Close, CloudUpload, Delete } from "@mui/icons-material";
+import { Autocomplete, Box, Button, Checkbox, IconButton, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
 import { useMemo, useState } from "react";
 
 const headers = [
@@ -103,6 +103,7 @@ function TopToolBar(params) {
     <Toolbar
       sx={{
         bgcolor: numSelected > 0 && "var(--light-blue)",
+        mt: 2
       }}
       >
       {numSelected > 0 ? (
@@ -131,6 +132,166 @@ function TopToolBar(params) {
       </Tooltip>
     </Toolbar>
   );
+}
+
+function ModalEditor(params) {
+  const [open, setOpen] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    location: null,
+    image: null,
+    description: "",
+    price: 0,
+    dates: "",
+  });
+  const [images, setImages] = useState([])
+  const locations = [
+    {label: "Charyn Canyon", id: 0},
+    {label: "Alakol", id: 1},
+  ];
+  
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormData(prev => ({ 
+      ...prev,
+      [name]: value 
+    }));
+  }
+
+  function handleImages(e) {
+    setImages([...images, e.target.files[0]])
+    console.log(images)
+  }
+
+  function handleImageRemove(id) {
+    let newImages = images.filter((_, i) => i !== id);
+    console.log('filtered', newImages)
+    setImages(newImages)
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log(formData)
+  }
+
+  return (
+    <>
+      <Button variant="contained" onClick={handleOpen}>+Add new tour</Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 800,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            pt: 2,
+            px: 4,
+            pb: 3,
+          }}
+        >
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+            <Typography variant="body">Add tour</Typography>
+            <IconButton onClick={handleClose}>
+              <Close />
+            </IconButton>
+          </Stack>
+          <Stack
+            component="form"
+            onSubmit={handleSubmit}
+            gap={3}
+          >
+            <TextField 
+              label="Tour name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            /> 
+            <Box>
+              <div>Tour cover images:</div>
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                startIcon={<CloudUpload />}
+                sx={{textTransform: "none"}}
+              >
+                Upload Images
+                <input
+                  hidden
+                  type="file"
+                  onChange={handleImages}
+                  multiple
+                />
+              </Button>
+              <Stack>
+                {images.map((im, id) => (
+                  <Stack key={id} direction="row" alignItems="center">
+                    <div>
+                      {im.name}
+                    </div>
+                    <IconButton onClick={() => handleImageRemove(id)}>
+                      <Close />
+                    </IconButton>
+                  </Stack>
+                ))}
+              </Stack>
+            </Box>
+            <Autocomplete 
+              disablePortal
+              options={locations}
+              renderInput={(params) => 
+              <TextField 
+                {...params} 
+                label="Location"
+                name="location"
+                value={formData.location} 
+                onChange={handleChange} 
+                required
+              />}
+              
+            />
+            <TextField 
+              label="Tour Dates"
+              name="dates"
+              value={formData.dates}
+              onChange={handleChange}
+              required
+            /> 
+            <TextField 
+              label="Description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+            /> 
+            <TextField 
+              type="number"
+              label="Price"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+            /> 
+            <Stack direction="row" gap={2}>
+              <Button variant="contained" type="submit">Confirm</Button>
+              <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+            </Stack>
+          </Stack>
+        </Box>
+      </Modal>
+    </>
+  )
 }
 
 export default function ToursAdmin(params) {
@@ -183,6 +344,7 @@ export default function ToursAdmin(params) {
   
   return (
     <>
+      <ModalEditor />
       <Paper>
         <TopToolBar numSelected={selected.length} />
         <Table>
@@ -222,8 +384,10 @@ export default function ToursAdmin(params) {
                   <TableCell align="right">{row.location}</TableCell>
                   <TableCell align="right">{row.description}</TableCell>
                   <TableCell align="right">
-                    <Button variant="contained" sx={{marginRight: 1}}>edit</Button>
-                    <Button variant="contained" color="error">delete</Button>
+                    <Stack direction="row" justifyContent="end">
+                      <Button variant="contained" sx={{marginRight: 1}}>edit</Button>
+                      <Button variant="contained" color="error">delete</Button>
+                    </Stack>
                   </TableCell>
                 </TableRow>
               )
