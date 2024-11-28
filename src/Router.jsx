@@ -11,6 +11,7 @@ import Orders from "./routes/profile/Orders";
 import Admin from "./routes/admin/Admin";
 import LocationsAdmin from "./routes/admin/LocationsAdmin";
 import ToursAdmin from "./routes/admin/ToursAdmin";
+import Order from "./routes/Order";
 
 
 
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "tours/:id",
         element: <Tour />
+      },
+      {
+        path: "order/:id",
+        element: <Order />
       },
       {
         path: "profile",

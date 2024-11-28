@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom"
 import { Star } from "@mui/icons-material";
 
 export default function Tour(params) {
-  const logged = false;
+  const logged = true;
   const { id } = useParams();
 
   const data = {
@@ -40,7 +40,7 @@ export default function Tour(params) {
             variant="contained" 
             sx={{marginTop: "20px", borderRadius: "20px", fontWeight: "bold"}}
             LinkComponent={Link}
-            to={logged ? "/order" : "/login"}
+            to={logged ? `/order/${id}` : "/login"}
             >
             Order ticket
           </Button>
