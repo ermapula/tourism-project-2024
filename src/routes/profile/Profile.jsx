@@ -1,14 +1,17 @@
 import { PersonOutline, ReceiptLongOutlined } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Profile(params) {
-
+  useEffect(() => {
+    document.title = "Profile";
+  }, [])
   const data = {
     fname: "Samat",
     lname: "Bekturganov",
     email: "account@mail.com",
-    phone: "8 777 654 32 10"
+    phone: "87776543210"
   }
 
   return (

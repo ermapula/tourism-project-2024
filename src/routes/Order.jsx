@@ -1,8 +1,12 @@
 import { Box, Button, Card, Divider, Stack, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function Order(params) {
+  useEffect(() => {
+    document.title = "Order a ticket";
+  }, [])
+
   const nav = useNavigate();
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);

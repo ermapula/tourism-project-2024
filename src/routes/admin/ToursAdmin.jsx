@@ -30,6 +30,18 @@ const headers = [
     label: "Location",
   },
   {
+    id: "price",
+    numeric: true,
+    disablePadding: false,
+    label: "Price",
+  },
+  {
+    id: "dates",
+    numeric: true,
+    disablePadding: false,
+    label: "Dates",
+  },
+  {
     id: "description",
     numeric: true,
     disablePadding: false,
@@ -43,29 +55,7 @@ const headers = [
   },
 ]
 
-const data = [
-  {
-    image: '../tours/charyn.jpg',
-    id: 1,
-    name: "name",
-    location: "location",
-    description: "asdfasdf",
-  },
-  {
-    image: '../tours/charyn.jpg',
-    id: 2,
-    name: "name",
-    location: "location",
-    description: "asdfasdf",
-  },
-  {
-    image: '../tours/charyn.jpg',
-    id: 3,
-    name: "name",
-    location: "location",
-    description: "asdfasdf",
-  },
-]
+
 
 function TableHeader(params) {
   const { numSelected, rowCount, onSelectAllClick } = params;
@@ -139,7 +129,7 @@ function ModalEditor(params) {
   
   const [formData, setFormData] = useState({
     name: "",
-    location: null,
+    location: "",
     image: null,
     description: "",
     price: 0,
@@ -147,8 +137,11 @@ function ModalEditor(params) {
   });
   const [images, setImages] = useState([])
   const locations = [
-    {label: "Charyn Canyon", id: 0},
-    {label: "Alakol", id: 1},
+     "Charyn Canyon",
+     "Kolsay lakes",
+     "Kayindy lakes",
+     "Turkestan",
+     "Astana",
   ];
   
   const handleOpen = () => setOpen(true);
@@ -175,7 +168,12 @@ function ModalEditor(params) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log(formData)
+    if(images){
+      formData['image'] = images[0].name;
+    }
+    formData['id'] = params.id + 1;
+    params.addTour(formData)
+    handleClose();
   }
 
   return (
@@ -251,13 +249,18 @@ function ModalEditor(params) {
             <Autocomplete 
               disablePortal
               options={locations}
+              name="location"
+              value={formData.location} 
+              onChange={(e, v) => {
+                setFormData(prev => ({
+                  ...prev,
+                  location: v
+                }))
+              }} 
               renderInput={(params) => 
               <TextField 
                 {...params} 
                 label="Location"
-                name="location"
-                value={formData.location} 
-                onChange={handleChange} 
                 required
               />}
               
@@ -295,6 +298,15 @@ function ModalEditor(params) {
 }
 
 export default function ToursAdmin(params) {
+  const [data, setData] = useState([{
+    image: '1.jpg',
+    id: 1,
+    name: "Charyn Tour",
+    location: "Charyn Canyon",
+    price: 8000,
+    dates: "Weekend",
+    description: `Discover the stunning beauty of Charyn Canyon. Located just a few hours from Almaty, this tour offers breathtaking views, fascinating rock formations, and a chance to explore the famous Valley of Castles. Perfect for nature enthusiasts and adventure seekers, this day trip includes guided hikes, a picnic by the Charyn River, and plenty of photo opportunities.`,
+  }])
   const [selected, setSelected] = useState([]);
 
   const [page, setPage] = useState(0);
@@ -327,7 +339,7 @@ export default function ToursAdmin(params) {
     }
     setSelected(newSelected);
   }
-
+  
   function handleChangePage(e, newPage) {
     setPage(newPage);
   };
@@ -339,12 +351,16 @@ export default function ToursAdmin(params) {
 
   const rows = useMemo(() =>
     [...data].slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [page, rowsPerPage], 
+    [data, page, rowsPerPage], 
   );
+
+  function handleAddTour(d) {
+    setData([...data, d])
+  }
   
   return (
     <>
-      <ModalEditor />
+      <ModalEditor addTour={handleAddTour} id={data.length} />
       <Paper>
         <TopToolBar numSelected={selected.length} />
         <Table>
@@ -378,11 +394,13 @@ export default function ToursAdmin(params) {
                       }}
                     />
                   </TableCell>
-                  <TableCell><Box component="img" src={row.image} width="150px" /></TableCell>
+                  <TableCell><Box component="img" src={`../tours/${row.image}`} width="150px" /></TableCell>
                   <TableCell align="right">{row.id}</TableCell>
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell align="right">{row.location}</TableCell>
-                  <TableCell align="right">{row.description}</TableCell>
+                  <TableCell align="right">&#8376;{row.price}</TableCell>
+                  <TableCell align="right">{row.dates}</TableCell>
+                  <TableCell align="right" sx={{width: "40%"}}>{row.description}</TableCell>
                   <TableCell align="right">
                     <Stack direction="row" justifyContent="end">
                       <Button variant="contained" sx={{marginRight: 1}}>edit</Button>

@@ -1,9 +1,12 @@
 import { Explore, Menu, Place } from "@mui/icons-material";
 import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 
 export default function Admin(params) {
+  useEffect(() => {
+    document.title = "Backstage management"
+  }, [])
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   function handleSideToggle() {

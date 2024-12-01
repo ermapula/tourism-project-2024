@@ -45,25 +45,44 @@ const headers = [
 
 const data = [
   {
-    image: '../locations/charyn.jpg',
+    image: '../locations/1.jpg',
     id: 1,
-    name: "name",
-    address: "address",
-    description: "asdfasdf",
+    name: "Charyn Canyon",
+    category: "nature",
+    address: "Almaty Region",
+    description: `Charyn Canyon (Шарын шатқалы) is a canyon on the Charyn River in Almaty region and is a part of the Charyn National Park. The canyon is roughly 154 km in length and features many formations formed by the weathering of sedimentary rock. This stunning geological formation is often referred to as the "Grand Canyon of Central Asia."`,
   },
   {
-    image: '../locations/charyn.jpg',
+    image: '../locations/2.jpg',
     id: 2,
-    name: "name",
-    address: "address",
-    description: "asdfasdf",
+    name: "Kolsay lakes",
+    category: "historical",
+    address: "Almaty Region",
+    description: "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Repudiandae quod dolorum aspernatur recusandae maiores quia quidem consequatur ratione nesciunt? Quidem eveniet nulla repellat quaerat sit iste recusandae consectetur architecto illum.",
   },
   {
-    image: '../locations/charyn.jpg',
+    image: '../locations/3.jpg',
     id: 3,
-    name: "name",
-    address: "address",
-    description: "asdfasdf",
+    name: "Kayindy lakes",
+    category: "city",
+    address: "Almaty Region",
+    description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis minus id, soluta corporis enim voluptates eum at totam corrupti voluptas quidem sed quae, repellat a iure quos aliquid, voluptatibus molestias.",
+  },
+  {
+    image: '../locations/4.jpg',
+    id: 4,
+    name: "Turkestan",
+    category: "nature",
+    address: "Turkistan Region",
+    description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis minus id, soluta corporis enim voluptates eum at totam corrupti voluptas quidem sed quae, repellat a iure quos aliquid, voluptatibus molestias.",
+  },
+  {
+    image: '../locations/5.jpg',
+    id: 5,
+    name: "Astana",
+    category: "nature",
+    address: "Astana",
+    description: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis minus id, soluta corporis enim voluptates eum at totam corrupti voluptas quidem sed quae, repellat a iure quos aliquid, voluptatibus molestias.",
   },
 ]
 
@@ -220,7 +239,7 @@ export default function LocationsAdmin(params) {
                   <TableCell align="right">{row.id}</TableCell>
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell align="right">{row.address}</TableCell>
-                  <TableCell align="right">{row.description}</TableCell>
+                  <TableCell align="right" sx={{width: "40%"}}>{row.description}</TableCell>
                   <TableCell align="right">
                     <Button variant="contained" sx={{marginRight: 1}}>edit</Button>
                     <Button variant="contained" color="error">delete</Button>

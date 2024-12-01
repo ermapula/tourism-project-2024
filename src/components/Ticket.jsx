@@ -56,9 +56,9 @@ export default function Ticket({ticket}) {
       <Divider sx={{marginTop: 2, marginBottom: 2}}/> 
       <Typography
         variant="h6"
-        sx={{placeSelf: "end"}}
+        sx={{placeSelf: "start"}}
       >
-        Total price: &#8376;{ticket.price}
+        Price: &#8376;{ticket.price}
       </Typography>
     </Card>
   ) 

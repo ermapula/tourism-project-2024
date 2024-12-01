@@ -1,6 +1,7 @@
 import { Button, Divider, Stack, Typography } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom"
-import { Star } from "@mui/icons-material";
+import { CalendarMonth, Star } from "@mui/icons-material";
+import { useEffect } from "react";
 
 export default function Tour(params) {
   const logged = true;
@@ -10,9 +11,14 @@ export default function Tour(params) {
     image: "/tours/1.jpg",
     name: "Charyn Tour",
     agency: "Kaz Travel",
+    dates: "Weekend",
     description: `Discover the stunning beauty of Charyn Canyon. Located just a few hours from Almaty, this tour offers breathtaking views, fascinating rock formations, and a chance to explore the famous Valley of Castles. Perfect for nature enthusiasts and adventure seekers, this day trip includes guided hikes, a picnic by the Charyn River, and plenty of photo opportunities.`,
     rating: 4.7,
   }
+
+  useEffect(() => {
+    document.title = data.name;
+  }, [])
 
   return (
     <Stack
@@ -32,6 +38,10 @@ export default function Tour(params) {
           <div>
             {data.description}
           </div>
+          <Stack direction="row" alignItems="center" mt={1} gap={1}>
+            <CalendarMonth />
+            {data.dates}
+          </Stack>
           <div className="tour-rating">
             <Star color="info" sx={{width: "16px", height: "16px"}} />
             {data.rating}

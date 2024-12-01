@@ -1,9 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { validate } from "./util";
 // import axios from 'axios';
 
 export default function Register(props) {
+  useEffect(() => {
+    document.title = "Sign up";
+  }, [])
   // const navigate = useNavigate()
 
   const [formData, setFormData] = useState({

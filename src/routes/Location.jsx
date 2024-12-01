@@ -2,6 +2,7 @@ import { Divider, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom"
 import TourCard from "../components/TourCard";
 import { Place } from "@mui/icons-material";
+import { useEffect } from "react";
 
 export default function Location(params) {
   const { id } = useParams();
@@ -10,9 +11,12 @@ export default function Location(params) {
   const data = {
     image: "/locations/1.jpg",
     name: "Charyn Canyon",
-    address: "Almaty",
+    address: "Almaty Region",
     description: `Charyn Canyon (Шарын шатқалы) is a canyon on the Charyn River in Almaty region and is a part of the Charyn National Park. The canyon is roughly 154 km in length and features many formations formed by the weathering of sedimentary rock. This stunning geological formation is often referred to as the "Grand Canyon of Central Asia."`,
   }
+  useEffect(() => {
+    document.title = data.name;
+  }, [])
 
   const tours = [
     {
