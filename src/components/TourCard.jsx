@@ -8,8 +8,8 @@ export default function TourCard({id, image, name, agency, rating, nav}) {
       <CardActionArea onClick={() => {nav(`/tours/${id}`)}}>
         <CardMedia 
           component="img"
-          height="140"
           image={`/tours/${image}`}
+          sx={{aspectRatio: "16 / 9", objectPosition: "top"}}
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">

@@ -8,18 +8,18 @@ export default function Location(params) {
   const nav = useNavigate();
 
   const data = {
-    image: "/locations/charyn.jpg",
+    image: "/locations/1.jpg",
     name: "Charyn Canyon",
-    address: "place address",
-    description: "Place description: Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam alias omnis sit perferendis illo deleniti numquam id, hic suscipit harum libero aperiam eos, saepe ipsam tenetur? Aut culpa aliquam architecto?",
+    address: "Almaty",
+    description: `Charyn Canyon (Шарын шатқалы) is a canyon on the Charyn River in Almaty region and is a part of the Charyn National Park. The canyon is roughly 154 km in length and features many formations formed by the weathering of sedimentary rock. This stunning geological formation is often referred to as the "Grand Canyon of Central Asia."`,
   }
 
   const tours = [
     {
-      image: "charyn.jpg",
+      image: "1.jpg",
       name: "Charyn Tour",
-      agency: "Tour agency name",
-      rating: 4.9,
+      agency: "Kaz Travel",
+      rating: 4.7,
     }
   ]
 

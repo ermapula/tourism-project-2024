@@ -4,11 +4,10 @@ import Ticket from "../../components/Ticket";
 export default function Orders(params) {
   const ticket = {
     id: 0,
-    date: "1.01.2024",
-    tour: "Tour name",
-    price: 123,
-    quantity: 1,
-    name: "Name",
+    date: "2.12.2024",
+    tour: "Charyn Tour",
+    price: 8000,
+    name: "Samat",
     tour_id: 0
   }
   return (

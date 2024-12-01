@@ -23,7 +23,12 @@ export default function Header(params) {
               placeholder="Search places..."
             />
           </Paper>
-          <Link to="/login" className="nav-link">Log In</Link>
+          {
+            params.logged ?
+            (<a href="/" onClick={() => {localStorage.removeItem("logged")}} className="nav-link">Log Out</a>)
+            : 
+            (<Link to="/login" className="nav-link">Log In</Link>)
+          }
         </div>
       </nav>
     </>

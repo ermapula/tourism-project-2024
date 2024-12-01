@@ -1,8 +1,9 @@
 import { Avatar, Box, Button, Stack, TextField } from "@mui/material";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 
 export default function Personal(params) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(useOutletContext("data")|| {
     fname: "",
     lname: "",
     email: "",
@@ -83,15 +84,7 @@ export default function Personal(params) {
           type="email"
           value={formData.email}
           onChange={handleChange}
-          required
-        />
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
+          disabled
         />
         <TextField
           label="Phone Number"

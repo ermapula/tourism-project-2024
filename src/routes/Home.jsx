@@ -1,38 +1,49 @@
 import { useNavigate } from "react-router-dom"
 import LocationCard from "../components/LocationCard"
+import { useEffect } from "react";
 
 export default function Home(params) {
   const nav = useNavigate();
+  useEffect(() => {
+    document.title = "Home";
+  }, [])
+  
+
   const locations = [
     {
-      image: "charyn.jpg",
+      id: 1,
+      image: "1.jpg",
       name: "Charyn Canyon",
-      agency: "Tour agency name",
+      type: "nature",
+      rating: 4.7,
+    },
+    {
+      id: 2,
+      image: "2.jpg",
+      name: "Kolsay lakes",
+      type: "nature",
       rating: 4.9,
     },
     {
-      image: "charyn.jpg",
-      name: "Charyn Canyon",
-      agency: "Tour agency name",
-      rating: 4.9,
+      id: 3,
+      image: "3.jpg",
+      name: "Kaindy lakes",
+      type: "nature",
+      rating: 4.6,
     },
     {
-      image: "charyn.jpg",
-      name: "Charyn Canyon",
-      agency: "Tour agency name",
-      rating: 4.9,
+      id: 4,
+      image: "4.jpg",
+      name: "Turkestan",
+      type: "historical",
+      rating: 4.8,
     },
     {
-      image: "charyn.jpg",
-      name: "Charyn Canyon",
-      agency: "Tour agency name",
-      rating: 4.9,
-    },
-    {
-      image: "charyn.jpg",
-      name: "Charyn Canyon",
-      agency: "Tour agency name",
-      rating: 4.9,
+      id: 5,
+      image: "5.jpg",
+      name: "Astana",
+      type: "city",
+      rating: 4.4,
     },
   ]
 
@@ -42,10 +53,10 @@ export default function Home(params) {
         <div className="card-grid">
           {locations.map((l, i) => (
             <LocationCard
-              id={i}
+              id={l.id}
               image={l.image} 
               name={l.name} 
-              agency={l.agency} 
+              type={l.type}
               rating={l.rating} 
               nav={nav}
               key={i}

@@ -4,7 +4,7 @@ import { validate } from "./util";
 // import axios from "axios";
 
 export default function Login(props) {
-  // const navigate = useNavigate();
+  const nav = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -57,6 +57,8 @@ export default function Login(props) {
     //     console.log(err.response)
     //   })
     console.log(data)
+    localStorage.setItem("logged", 1)
+    nav('/profile')
   }
 
   

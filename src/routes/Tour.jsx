@@ -7,11 +7,11 @@ export default function Tour(params) {
   const { id } = useParams();
 
   const data = {
-    image: "/tours/charyn.jpg",
+    image: "/tours/1.jpg",
     name: "Charyn Tour",
-    agency: "tour agency name",
-    description: "Tour info: Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta a totam suscipit voluptatibus ducimus dolor, at dolores consequuntur non nesciunt exercitationem temporibus repellendus cumque natus, obcaecati praesentium, quae et voluptatum?",
-    rating: 4.9,
+    agency: "Kaz Travel",
+    description: `Discover the stunning beauty of Charyn Canyon. Located just a few hours from Almaty, this tour offers breathtaking views, fascinating rock formations, and a chance to explore the famous Valley of Castles. Perfect for nature enthusiasts and adventure seekers, this day trip includes guided hikes, a picnic by the Charyn River, and plenty of photo opportunities.`,
+    rating: 4.7,
   }
 
   return (

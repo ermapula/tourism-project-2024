@@ -30,7 +30,7 @@ export default function Ticket({ticket}) {
       >
         <Box
           component="img"
-          src="../tours/charyn.jpg"
+          src="../tours/1.jpg"
           sx={{width: "150px", borderRadius: 2 }}
         />
         <Box>
@@ -51,14 +51,7 @@ export default function Ticket({ticket}) {
             Tour page 
           </Typography>
         </Box>
-        <Typography
-          variant="body"
-          
-          sx={{marginLeft: "auto"}}
-          
-        >
-          Tickets x{ticket.quantity}
-        </Typography>
+        
       </Stack>
       <Divider sx={{marginTop: 2, marginBottom: 2}}/> 
       <Typography

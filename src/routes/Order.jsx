@@ -7,22 +7,11 @@ export default function Order(params) {
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
   const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
+    name: "Samat",
+    phone: "87776543210",
     description: "",
   });
-  const price = 123;
   
-  function handleNumChange(e) {
-    let num = e.target.value;
-    if(num === "" || (num <= 10 && num > 0)) {
-      setQuantity(num);
-    } else if (num < 1) {
-      setQuantity(1);
-    } else if (num > 10){
-      setQuantity(10)
-    }
-  }
   function handleChange(e) {
     const {name, value} = e.target;
     setFormData(prev => ({
@@ -45,7 +34,8 @@ export default function Order(params) {
         gap={2}
         sx={{
           p: 4,
-          width: "80%"
+          width: "50%",
+          pl: 20
         }} 
       >
         <Box>
@@ -60,7 +50,6 @@ export default function Order(params) {
             >
               <Typography flex={1}>Tour name</Typography>
               <Typography width={100}>Price</Typography>
-              <Typography width={100}>Quantity</Typography>
             </Stack>
             <Divider sx={{marginTop: 2, marginBottom: 2}} />
             <Stack
@@ -68,29 +57,12 @@ export default function Order(params) {
               gap={2}
               alignItems="center"
             >
-              <Box component="img" src="../tours/charyn.jpg" height={100} />
-              <Typography flex={1}>Tour </Typography>
-              <Typography width={100}>&#8376;123</Typography>
-              <Box
-                component="input"
-                type="number" 
-                min="1" 
-                max="10" 
-                value={quantity} 
-                onChange={handleNumChange} 
-                sx={{
-                  width: 100,
-                  border: 0,
-                  borderBottom: "1px solid #000",
-                  outline: 0
-                }}
-              />
+              <Box component="img" src="../tours/1.jpg" height={100} />
+              <Typography flex={1}>Charyn Tour</Typography>
+              <Typography width={100}>&#8376;8000</Typography>
+              
             </Stack>
-            <Divider sx={{marginTop: 2, marginBottom: 2}} />
-            <Box>
-              <Typography variant="body">Total price</Typography>
-              <Typography width={100} sx={{float: "right"}}>&#8376;{quantity * price}</Typography>
-            </Box>
+            
           </Card>
         </Box>
         <Stack gap={2}>
@@ -108,12 +80,12 @@ export default function Order(params) {
             onChange={handleChange}
             required
           />      
-          <TextField
+          {/* <TextField
             label="Additional Information"
             name="description"
             value={formData.description}
             onChange={handleChange}
-          />
+          /> */}
         </Stack>
         <Stack direction="row" gap={2}>
           <Button variant="contained" type="submit">Confirm</Button>
