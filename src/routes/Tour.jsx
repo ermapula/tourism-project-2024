@@ -2,6 +2,7 @@ import { Button, Divider, Stack, Typography } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom"
 import { CalendarMonth, Star } from "@mui/icons-material";
 import { useEffect } from "react";
+import Comment from "../components/Comment";
 
 export default function Tour(params) {
   const logged = true;
@@ -56,7 +57,9 @@ export default function Tour(params) {
           </Button>
         </div>
       </div>
-      {/* TODO: Comment section */}
+      <div>
+        <Comment />
+      </div>
     </Stack>
   )
 }

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import LocationCard from "../components/LocationCard"
 import { useEffect } from "react";
+import { Button } from "@mui/material";
 
 export default function Home(params) {
   const nav = useNavigate();
@@ -46,10 +47,24 @@ export default function Home(params) {
       rating: 4.4,
     },
   ]
+  const categories = [
+    'Nature',
+    'Historical',
+    'Sight seeing',
+    'City'
+  ]
 
   return (
     <>
       <div className="main">
+        <div className="categories">
+          Categories:
+          {
+            categories.map((c, i) => (
+              <Button variant="outlined" key={i} sx={{borderRadius: "20px"}}>{c}</Button>  
+            ))
+          }
+        </div>
         <div className="card-grid">
           {locations.map((l, i) => (
             <LocationCard

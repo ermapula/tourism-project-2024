@@ -122,6 +122,14 @@ footer {
 .main {
   padding: 50px 10%;
 }
+.categories{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: -20px;
+}
 .card-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

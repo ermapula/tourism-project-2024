@@ -1,8 +1,11 @@
 import { Avatar, Box, Button, Stack, TextField } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 export default function Personal(params) {
+  useEffect(() => {
+    document.title = "Profile"
+  }, [])
   const [formData, setFormData] = useState(useOutletContext("data")|| {
     fname: "",
     lname: "",

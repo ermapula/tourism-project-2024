@@ -61,7 +61,7 @@ export default function Login(props) {
     //   })
     console.log(data)
     localStorage.setItem("logged", 1)
-    nav('/profile')
+    nav('/')
   }
 
   

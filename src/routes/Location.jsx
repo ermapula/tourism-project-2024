@@ -41,6 +41,9 @@ export default function Location(params) {
             <Place color="error" />
             {data.address}
           </div>
+          <h4>
+            Category: Nature
+          </h4>
           <div>
             {data.description}
           </div>

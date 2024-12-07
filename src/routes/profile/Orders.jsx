@@ -1,7 +1,11 @@
 import { Stack } from "@mui/material";
 import Ticket from "../../components/Ticket";
+import { useEffect } from "react";
 
 export default function Orders(params) {
+  useEffect(() => {
+    document.title = "My orders"
+  }, [])
   const ticket = {
     id: 0,
     date: "2.12.2024",
