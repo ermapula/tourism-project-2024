@@ -1,11 +1,22 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { validate } from "./util";
-// import axios from "axios";
+import styled from "@emotion/styled";
+import { Button, IconButton, Stack, TextField } from "@mui/material";
+import { login } from "../../api/auth";
+import { ArrowBack } from "@mui/icons-material";
+
+const Field = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    border: "none",
+    borderRadius: "16px",
+    backgroundColor: "white",
+  }
+})
 
 export default function Login(props) {
   useEffect(() => {
-    document.title = "Sign in";
+    document.title = "Log in";
   }, [])
   const nav = useNavigate();
 
@@ -31,37 +42,44 @@ export default function Login(props) {
     }))
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!validate(formData, setError)) {
       return;
     }
 
-    const data = {
-      username: formData.email,
+    const cred = {
+      email: formData.email,
       password: formData.password
     }
     
-    // axios.post('', data)
-    //   .then(res => {
+    login(cred)
+      .then((data) => {
+        localStorage.setItem("access", data.access);
+        localStorage.setItem("refresh", data.refresh);
         
-    //     setFormData({
-    //       email: '',
-    //       password: '',
-    //     })
-    //     setError({
-    //       email: '',
-    //       password: '',
-    //     })
+        setFormData({
+          email: '',
+          password: '',
+        })
+        setError({
+          email: '',
+          password: '',
+        })
+        nav('/')
+      })
+      .catch((err) => {
+        console.log(err)
+        setFormData(prev => ({
+          ...prev,
+          password: '',
+        }))
+        setError({
+          email: 'Invalid credentials',
+          password: 'Invalid credentials',
+        })
+      })
     
-    //     navigate('/')
-    //   })
-    //   .catch(err => {
-    //     console.log(err.response)
-    //   })
-    console.log(data)
-    localStorage.setItem("logged", 1)
-    nav('/')
   }
 
   
@@ -70,36 +88,48 @@ export default function Login(props) {
     <>
       <div className="content">
         <div className="wrapper">
+          <IconButton sx={{position: "absolute", left: 20, top: 20}} component={Link} to="/">
+            <ArrowBack />
+          </IconButton>
           <p className="form-title">Log In to WebSite</p>
-          <form className="form" onSubmit={handleSubmit}>
-            <div>
-              { error.email && <div className="error-msg">{error.email}</div> }
-              <input 
-                id="email" 
-                type="text"
-                className="form-field" 
-                name="email"
-                placeholder="Enter email"
-                value={formData.email}
-                onChange={handleChange}
-                />
-            </div>
-            <div>
-              { error.password && <div className="error-msg">{error.password}</div> }
-              <input 
-                id="password"
-                type="password"
-                className="form-field" 
-                name="password"
-                placeholder="Enter password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <button className="btn-submit" type="submit">
+          <Stack
+            component="form" 
+            direction="column"
+            gap={2}
+            onSubmit={handleSubmit}
+          >
+            <Field 
+              name="email"
+              label="Email"
+              value={formData.email}
+              onChange={handleChange}
+              error={!!error.email}
+              helperText={error.email}
+              required
+            />
+            <Field 
+              type="password"
+              name="password"
+              label="Password"
+              value={formData.password}
+              onChange={handleChange}
+              error={!!error.password}
+              helperText={error.password}
+              required
+            />
+            <Button variant="contained" 
+              type="submit"
+              sx={{
+                color: "white",
+                bgcolor: "var(--color)",
+                fontWeight: "bold",
+                fontSize: "32px",
+                borderRadius: "16px"
+              }}
+            >
               Log In
-            </button>
-          </form>
+            </Button>
+          </Stack>
           <p className="redirect">
             Don&#39;t have an account?
             <span style={{marginLeft: "6px"}}>

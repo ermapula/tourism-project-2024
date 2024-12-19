@@ -1,24 +1,43 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { validate } from "./util";
-// import axios from 'axios';
+import { Button, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import styled from "@emotion/styled";
+import { register } from "../../api/auth";
+import { ArrowBack } from "@mui/icons-material";
+
+const Field = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    border: "none",
+    borderRadius: "16px",
+    backgroundColor: "white",
+  }
+})
 
 export default function Register(props) {
   useEffect(() => {
     document.title = "Sign up";
   }, [])
-  // const navigate = useNavigate()
+  const nav = useNavigate()
 
   const [formData, setFormData] = useState({
+    fname: '',
+    lname: '',
     email: '',
     password: '',
     password2: '',
+    phone: '',
+    gender: '',
   });
   
   const [error, setError] = useState({
+    fname: '',
+    lname: '',
     email: '',
     password: '',
     password2: '',
+    phone: '',
+    gender: '',
   })
 
   function handleChange(e) {
@@ -39,30 +58,42 @@ export default function Register(props) {
       return;
     }
     const data = {
+      first_name: formData.fname,
+      last_name: formData.lname,
       email: formData.email,
       password: formData.password,
+      gender: formData.gender,
+      phone: formData.phone,
     }
 
-    // axios.post('', data)
-    //   .then(res => {
-    //     navigate('/login')
-        
-    //     setFormData({
-    //       email: '',
-    //       password: '',
-    //       password2: '',
-    //     })
-        
-    //     setError({
-    //       email: '',
-    //       password: '',
-    //       password2: '',
-    //     })
-    //   })
-    //   .catch(err => {
-    //     console.log(err.response)
-    //   })
-    console.log(data)
+    register(data)
+      .then(res => {
+        console.log("register:", res)
+        setFormData({
+          fname: '',
+          lname: '',
+          email: '',
+          password: '',
+          password2: '',
+          phone: '',
+          gender: '',
+        })
+
+        setError({
+          fname: '',
+          lname: '',
+          email: '',
+          password: '',
+          password2: '',
+          phone: '',
+          gender: '',
+        })
+
+        nav('/login');
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
 
@@ -70,53 +101,100 @@ export default function Register(props) {
     <>
       <div className="content">
         <div className="wrapper">
+          <IconButton sx={{position: "absolute", left: 20, top: 20}} component={Link} to="/">
+            <ArrowBack />
+          </IconButton>
           <p className="form-title">Sign Up to WebSite</p>
-          <form className="form" onSubmit={handleSubmit}>
-            <div>
-              { error.email && <span className="error-msg">{error.email}</span> }
-              <input 
-                id="email" 
-                type="text"
-                className="form-field" 
-                name="email"
-                placeholder="Enter email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              { error.password && <span className="error-msg">{error.password}</span> }
-              <input 
-                id="password"
-                type="password"
-                className="form-field" 
-                name="password"
-                placeholder="Enter password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              { error.password2 && <span className="error-msg">{error.password2}</span> }
-              <input 
-                id="password2"
-                type="password"
-                className="form-field" 
-                name="password2"
-                placeholder="Confirm password"
-                value={formData.password2}
-                onChange={handleChange}
-              />
-            </div>
-            <button className="btn-submit">
+          <Stack 
+            component="form" 
+            direction="column"
+            gap={2}
+            onSubmit={handleSubmit}
+          >
+            <Field 
+              name="email"
+              label="Email"
+              value={formData.email}
+              onChange={handleChange}
+              error={!!error.email}
+              helperText={error.email}
+              required
+            />
+            <Field 
+              name="fname"
+              label="First name"
+              value={formData.fname}
+              onChange={handleChange}
+              error={!!error.fname}
+              helperText={error.fname}
+              required
+            />
+            <Field 
+              name="lname"
+              label="Last name"
+              value={formData.lname}
+              onChange={handleChange}
+              error={!!error.lname}
+              helperText={error.lname}
+              required
+            />
+            <Field
+              select
+              name="gender"
+              label="Gender"
+              value={formData.gender}
+              onChange={handleChange}
+            >
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+            </Field>
+            <Field 
+              name="phone"
+              label="Phone number"
+              value={formData.phone}
+              onChange={handleChange}
+              error={!!error.phone}
+              helperText={error.phone}
+            />
+            <Field 
+              type="password"
+              name="password"
+              label="Password"
+              value={formData.password}
+              onChange={handleChange}
+              error={!!error.password}
+              helperText={error.password}
+              required
+            />
+            <Field 
+              type="password"
+              name="password2"
+              label="Confirm password"
+              value={formData.password2}
+              onChange={handleChange}
+              error={!!error.password2}
+              helperText={error.password2}
+              required
+            />
+             
+            <Button variant="contained" 
+              type="submit"
+              sx={{
+                color: "white",
+                bgcolor: "var(--color)",
+                fontWeight: "bold",
+                fontSize: "32px",
+                borderRadius: "16px"
+              }}
+            >
               Sign Up
-            </button>
-          </form>
+            </Button>
+          </Stack>
           <p className="redirect">
             Already have an account?
             <span style={{marginLeft: "6px"}}>
               <Link to='/login' className="link">
-                Log In
+                Log in
               </Link>
             </span>
           </p>
