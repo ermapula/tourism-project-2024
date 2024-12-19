@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosPublic from "./initPublic";
 
 const axiosPrivate = axios.create({
   // baseURL: "http://localhost:8000",
@@ -16,5 +17,37 @@ axiosPrivate.interceptors.request.use((config) => {
   }
   return config;
 })
+
+axiosPrivate.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if(error.response?.status === 401) {
+      const errorData = error.response.data;
+      if(errorData.code === "token_not_valid") {
+        const token = localStorage.getItem("refresh");
+        try {
+          const response = await axiosPublic.post("api/users/refresh/", {refresh: token});
+          localStorage.setItem("access", response.data.access);
+          originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
+          return axiosPrivate.request(originalRequest);
+        } 
+        catch (err) {
+          if(err.response?.data?.code === "token_not_valid") {
+            console.log("Token resfresh error:", err);
+            localStorage.removeItem("access");
+            localStorage.removeItem("refresh");
+            window.location.href = "/login";
+          }
+          return Promise.reject(err);
+        }
+      }
+    }
+
+    return Promise.reject(error);
+  }
+)
+
+
 
 export default axiosPrivate;
