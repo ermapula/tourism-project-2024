@@ -1,18 +1,27 @@
-import { Avatar, Box, Button, Stack, TextField } from "@mui/material";
+import { Avatar, Box, Button, Stack, TextField, MenuItem } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { updateProfile } from "../../api/auth";
 
 export default function Personal(params) {
   useEffect(() => {
     document.title = "Profile"
   }, [])
-  const [formData, setFormData] = useState(useOutletContext("data")|| {
-    fname: "",
-    lname: "",
+
+  const { data } = useOutletContext();
+  const [formData, setFormData] = useState({
+    id: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    password: "",
+    gender: "",
     phone: "",
   });
+  useEffect(() => {
+    setFormData(data);
+  }, [data]);
+
+
   const [profilePicture, setProfilePicture] = useState(null);
 
   function handleChange(e) {
@@ -33,7 +42,17 @@ export default function Personal(params) {
   function handleSubmit(e) {
     e.preventDefault();
     console.log("Form Data:", formData);
+
+    updateProfile(formData.id, formData)
+      .then((data) => {
+        console.log("Data:", data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }
+
+
   return (
     <>
       <h1>Personal Info</h1>
@@ -71,14 +90,14 @@ export default function Personal(params) {
         </Stack>
         <TextField
           label="First name"
-          name="fname"
-          value={formData.fname}
+          name="frist_name"
+          value={formData.first_name}
           onChange={handleChange}
         />
         <TextField
           label="Last name"
-          name="lname"
-          value={formData.lname}
+          name="last_name"
+          value={formData.last_name}
           onChange={handleChange}
         />      
         <TextField
@@ -96,6 +115,16 @@ export default function Personal(params) {
           value={formData.phone}
           onChange={handleChange}
         />
+        <TextField
+          select
+          name="gender"
+          label="Gender"
+          value={formData.gender || ""}
+          onChange={handleChange}
+        >
+          <MenuItem value="male">Male</MenuItem>
+          <MenuItem value="female">Female</MenuItem>
+        </TextField>
         <Button
           type="submit"
           variant="contained"

@@ -1,18 +1,33 @@
 import { PersonOutline, ReceiptLongOutlined } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getProfile } from "../../api/auth";
 
 export default function Profile(params) {
+  const nav = useNavigate();
+  const [data, setData] = useState({
+    id: "",
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+  });
   useEffect(() => {
     document.title = "Profile";
   }, [])
-  const data = {
-    fname: "Samat",
-    lname: "Bekturganov",
-    email: "account@mail.com",
-    phone: "87776543210"
-  }
+
+  useEffect(() => {
+    getProfile()
+      .then((data) => {
+        setData(data);
+        console.log(data)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      
+  }, [])
 
   return (
     <div className="profile-page">
@@ -23,7 +38,7 @@ export default function Profile(params) {
             sx={{ width: 60, height: 60}}
           />
           <div className="user-name">
-            {`${data.fname} ${data.lname}`}
+            {`${data.first_name} ${data.last_name}`}
           </div>
         </div>
         <div className="profile-nav">
@@ -38,7 +53,7 @@ export default function Profile(params) {
         </div>
       </div>
       <div className="profile-main">
-        <Outlet context={data} />
+        <Outlet context={{data}} />
       </div>
     </div>
   ) 
