@@ -1,15 +1,29 @@
 import { Link } from "react-router-dom";
 import { IconButton, InputBase, Paper } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
+import { useContext } from "react";
+import { AuthContext } from "../routes/auth/AuthContext";
 
 export default function Header(params) {
+  const {user, setUser} = useContext(AuthContext);
   
+  function handleLogout() {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setUser(null);
+  }
+  console.log(user)
   return (
     <>
       <nav className="nav">
         <div className="nav-left">
           <Link to='/' className="nav-link">Home</Link>
-          <Link to='/profile' className="nav-link">Profile</Link>
+          <Link to={params.logged ? `/profile` : `/login`} className="nav-link">Profile</Link>
+          {
+            (user?.role == 'admin' || user?.role == 'manager') &&
+            
+            <Link to='/admin' className="nav-link">Backstage management</Link>
+          }
         </div>
         <div className="nav-right">
           <Paper
@@ -25,7 +39,7 @@ export default function Header(params) {
           </Paper>
           {
             params.logged ?
-            (<a href="/" onClick={() => {localStorage.removeItem("logged")}} className="nav-link">Log Out</a>)
+            (<a href="/" onClick={handleLogout} className="nav-link">Log Out</a>)
             : 
             (<Link to="/login" className="nav-link">Log In</Link>)
           }

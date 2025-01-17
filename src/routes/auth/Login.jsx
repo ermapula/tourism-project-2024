@@ -1,10 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { validate } from "./util";
 import styled from "@emotion/styled";
 import { Button, IconButton, Stack, TextField } from "@mui/material";
 import { login } from "../../api/auth";
 import { ArrowBack } from "@mui/icons-material";
+import { AuthContext } from "./AuthContext";
 
 const Field = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -15,6 +16,7 @@ const Field = styled(TextField)({
 })
 
 export default function Login(props) {
+  const { setUser } = useContext(AuthContext);
   useEffect(() => {
     document.title = "Log in";
   }, [])
@@ -57,7 +59,15 @@ export default function Login(props) {
       .then((data) => {
         localStorage.setItem("access", data.access);
         localStorage.setItem("refresh", data.refresh);
-        
+        setUser({
+          id: data.id,
+          firstName: data.first_name,
+          lastName: data.last_name,
+          email: data.email,
+          gender: data.gender,
+          phone: data.phone,
+          role: data.role,
+        })
         setFormData({
           email: '',
           password: '',
