@@ -1,10 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { validate } from "./util";
-import { Button, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
+import { Button, CircularProgress, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from "@mui/material";
 import styled from "@emotion/styled";
 import { register } from "../../api/auth";
 import { ArrowBack } from "@mui/icons-material";
+import { AuthContext } from "./AuthContext";
 
 const Field = styled(TextField)({
   '& .MuiOutlinedInput-root': {
@@ -15,10 +16,17 @@ const Field = styled(TextField)({
 })
 
 export default function Register(props) {
+  const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false)
+  const nav = useNavigate()
   useEffect(() => {
     document.title = "Sign up";
   }, [])
-  const nav = useNavigate()
+  useEffect(() => {
+    if(user){
+      nav('/')
+    }
+  })
 
   const [formData, setFormData] = useState({
     fname: '',
@@ -54,7 +62,9 @@ export default function Register(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true)
     if(!validate(formData, setError)){
+      setLoading(false)
       return;
     }
     const data = {
@@ -88,11 +98,25 @@ export default function Register(props) {
           phone: '',
           gender: '',
         })
-
+        
         nav('/login');
       })
       .catch(err => {
         console.log(err)
+        if(err.response.data.email.includes("user with this email already exists.")){
+          setError(prev => ({
+            ...prev,
+            email: 'Account with this email already exists',
+          }))
+          setFormData(prev => ({
+            ...prev,
+            password: '',
+            password2: ''
+          }))
+        }
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }
 
@@ -187,7 +211,12 @@ export default function Register(props) {
                 borderRadius: "16px"
               }}
             >
-              Sign Up
+              {
+                loading ?
+                <CircularProgress sx={{color: "white", padding: "8px"}} />
+                : 
+                "Sign Up"
+              }
             </Button>
           </Stack>
           <p className="redirect">

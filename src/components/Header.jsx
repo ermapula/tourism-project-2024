@@ -12,13 +12,13 @@ export default function Header(params) {
     localStorage.removeItem("refresh");
     setUser(null);
   }
-  console.log(user)
+
   return (
     <>
       <nav className="nav">
         <div className="nav-left">
           <Link to='/' className="nav-link">Home</Link>
-          <Link to={params.logged ? `/profile` : `/login`} className="nav-link">Profile</Link>
+          <Link to={user ? `/profile` : `/login`} className="nav-link">Profile</Link>
           {
             (user?.role == 'admin' || user?.role == 'manager') &&
             
@@ -38,7 +38,7 @@ export default function Header(params) {
             />
           </Paper>
           {
-            params.logged ?
+            user ?
             (<a href="/" onClick={handleLogout} className="nav-link">Log Out</a>)
             : 
             (<Link to="/login" className="nav-link">Log In</Link>)

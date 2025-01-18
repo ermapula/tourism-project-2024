@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { validate } from "./util";
 import styled from "@emotion/styled";
-import { Button, IconButton, Stack, TextField } from "@mui/material";
+import { Button, CircularProgress, IconButton, Stack, TextField } from "@mui/material";
 import { login } from "../../api/auth";
 import { ArrowBack } from "@mui/icons-material";
 import { AuthContext } from "./AuthContext";
@@ -16,12 +16,17 @@ const Field = styled(TextField)({
 })
 
 export default function Login(props) {
-  const { setUser } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const { user, setUser } = useContext(AuthContext);
+  const nav = useNavigate();
   useEffect(() => {
     document.title = "Log in";
   }, [])
-  const nav = useNavigate();
-
+  useEffect(() => {
+    if(user){
+      nav('/')
+    }
+  })
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -46,7 +51,9 @@ export default function Login(props) {
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true)
     if (!validate(formData, setError)) {
+      setLoading(false)
       return;
     }
 
@@ -57,6 +64,7 @@ export default function Login(props) {
     
     login(cred)
       .then((data) => {
+        console.log(data)
         localStorage.setItem("access", data.access);
         localStorage.setItem("refresh", data.refresh);
         setUser({
@@ -76,20 +84,28 @@ export default function Login(props) {
           email: '',
           password: '',
         })
-        nav('/')
+        if(data.role == 'admin' || data.role == 'manager'){
+          nav('/admin')
+        } else {
+          nav('/')
+        }
       })
       .catch((err) => {
         console.log(err)
-        setFormData(prev => ({
-          ...prev,
-          password: '',
-        }))
-        setError({
-          email: 'Invalid credentials',
-          password: 'Invalid credentials',
-        })
+        if(err.response.data.detail == "No active account found with the given credentials"){
+          setFormData(prev => ({
+            ...prev,
+            password: '',
+          }))
+          setError({
+            email: 'Invalid credentials',
+            password: 'Invalid credentials',
+          })
+        }
       })
-    
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   
@@ -137,7 +153,12 @@ export default function Login(props) {
                 borderRadius: "16px"
               }}
             >
-              Log In
+              {
+                loading ?
+                <CircularProgress sx={{color: "white", padding: "8px"}} />
+                : 
+                "Log in"
+              }
             </Button>
           </Stack>
           <p className="redirect">

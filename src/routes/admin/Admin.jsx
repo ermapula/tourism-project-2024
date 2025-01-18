@@ -1,19 +1,32 @@
-import { Explore, Menu, Place } from "@mui/icons-material";
+import { Explore, Menu, Person, Place, ReceiptLongOutlined } from "@mui/icons-material";
 import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
-import { useState, useEffect } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { AuthContext } from "../auth/AuthContext";
 
 export default function Admin(params) {
+  const [mode, setMode] = useState(0);
+  const {user} = useContext(AuthContext);
+  const nav = useNavigate()
   useEffect(() => {
     document.title = "Backstage management"
   }, [])
+  useEffect(() => {
+    if(user?.role == 'admin') {
+      setMode(1)
+    } else if (user?.role == 'manager') {
+      setMode(2)
+    } else {
+      nav('/')
+    }
+  })
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   function handleSideToggle() {
     setIsSideOpen(!isSideOpen);
   }
 
-  const links = [
+  const managerLinks = [
     { 
       text: "Locations",
       path: "/admin/locations",
@@ -24,8 +37,26 @@ export default function Admin(params) {
       path: "/admin/tours",
       icon: <Explore />,
     },
+    { 
+      text: "Tickets",
+      path: "/admin/tickets",
+      icon: <ReceiptLongOutlined />,
+    },
   ]
 
+  const adminLinks = [
+    { 
+      text: "Locations",
+      path: "/admin/locations",
+      icon: <Place />,
+    },
+    {
+      text: "Users",
+      path: "/admin/users",
+      icon: <Person />,
+    },
+  ]
+  
   return (
     <>
       <nav className="nav admin-nav">
@@ -65,7 +96,31 @@ export default function Admin(params) {
         >
           <List>
             {
-              links.map((l, i) => (
+              mode == 1 &&
+              adminLinks.map((l, i) => (
+                <ListItem key={i} sx={{padding: 0}} >
+                  <ListItemButton
+                    component={Link}
+                    to={l.path}
+                    sx={{height: "48px"}}
+                  >
+                    <ListItemIcon
+                      sx={{
+                        justifyContent: "center",
+                        marginRight: isSideOpen ? 2 : 0,
+                        minWidth: 0,
+                      }}
+                    >
+                      {l.icon}
+                    </ListItemIcon>
+                    {isSideOpen && <ListItemText primary={l.text} />}
+                  </ListItemButton>
+                </ListItem>
+              ))
+            }
+            {
+              mode == 2 &&
+              managerLinks.map((l, i) => (
                 <ListItem key={i} sx={{padding: 0}} >
                   <ListItemButton
                     component={Link}
