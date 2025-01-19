@@ -12,6 +12,7 @@ import Admin from "./routes/admin/Admin";
 import LocationsAdmin from "./routes/admin/LocationsAdmin";
 import ToursAdmin from "./routes/admin/ToursAdmin";
 import Order from "./routes/Order";
+import UsersAdmin from "./routes/admin/UsersAdmin";
 
 
 
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       { 
         path: "tours",
         element: <ToursAdmin />
+      },
+      { 
+        path: "users",
+        element: <UsersAdmin />
       },
     ]
   },
