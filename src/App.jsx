@@ -7,9 +7,6 @@ import { apiKey, baseURL } from './api/initPublic.js'
 
 function App() {
 
-  console.log("baseURL", baseURL)
-  console.log("apikey", apiKey)
-
   return (
     <>
       <AuthProvider>
