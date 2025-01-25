@@ -2,7 +2,6 @@ import axios from "axios";
 import axiosPublic, { baseURL } from "./initPublic";
 
 const axiosPrivate = axios.create({
-  baseURL: baseURL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

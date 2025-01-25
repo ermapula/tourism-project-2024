@@ -4,7 +4,6 @@ export const apiKey = import.meta.env.VITE_MAP_API_KEY;
 
 
 const axiosPublic = axios.create({
-  baseURL: baseURL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
