@@ -1,12 +1,12 @@
 import { Bookmark, Explore, Menu, Person, Place, ReceiptLongOutlined } from "@mui/icons-material";
-import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
 import { useState, useEffect, useContext } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { AuthContext } from "../auth/AuthContext";
 
 export default function Admin(params) {
   const [mode, setMode] = useState(0);
-  const {user} = useContext(AuthContext);
+  const {user, setUser} = useContext(AuthContext);
   const nav = useNavigate()
   useEffect(() => {
     document.title = "Backstage management"
@@ -19,7 +19,7 @@ export default function Admin(params) {
     } else {
       nav('/')
     }
-  })
+  }, [])
   const [isSideOpen, setIsSideOpen] = useState(false);
 
   function handleSideToggle() {
@@ -62,6 +62,12 @@ export default function Admin(params) {
     },
   ]
   
+  function handleLogout() {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    setUser(null);
+  }
+
   return (
     <>
       <nav className="nav admin-nav">
@@ -81,7 +87,12 @@ export default function Admin(params) {
           <Link to='/' className="nav-link">Site Home page</Link>
         </div>
         <div className="nav-right">
-          <Link to="/login" className="nav-link">Log Out</Link>
+          {
+            user ?
+            (<a href="/" onClick={handleLogout} className="nav-link">Log Out</a>)
+            : 
+            (<Link to="/login" className="nav-link">Log In</Link>)
+          }
         </div>
       </nav>
 
