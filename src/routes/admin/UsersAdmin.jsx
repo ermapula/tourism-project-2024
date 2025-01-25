@@ -1,7 +1,7 @@
 import { Close } from "@mui/icons-material";
 import { Box, Button, CircularProgress, IconButton, MenuItem, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { createUser, deleteUser, getUsers, updateUser } from "../../api/admin";
+import { createManager, createUser, deleteUser, getUsers, updateUser } from "../../api/admin";
 
 const headers = [
   {
@@ -115,7 +115,7 @@ function ModalEditor(params) {
       email: "",
       gender: "",
       phone: "",
-      role: "",
+      role: "manager",
     })
   }
   
@@ -138,13 +138,14 @@ function ModalEditor(params) {
           console.log(err)
         })
     } else {
-      createUser(params.formData)
+      createManager(params.formData)
         .then(res => {
           params.update()
         })
         .catch(err => {
           console.log(err)
         })
+      
     }
     
     handleClose();
@@ -152,7 +153,7 @@ function ModalEditor(params) {
 
   return (
     <>
-      <Button variant="contained" onClick={handleOpen}>+Add</Button>
+      <Button variant="contained" onClick={handleOpen}>+Add manager</Button>
       <Modal
         open={params.open}
         onClose={handleClose}
@@ -172,7 +173,7 @@ function ModalEditor(params) {
           }}
         >
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-            <Typography variant="body">{params.mode ? 'Edit the user' : 'Add an user'}</Typography>
+            <Typography variant="body">{params.mode ? 'Edit the user' : 'Add a manager'}</Typography>
             <IconButton onClick={handleClose}>
               <Close />
             </IconButton>
@@ -203,6 +204,14 @@ function ModalEditor(params) {
               onChange={handleChange}
               required
             /> 
+            <TextField 
+              label="Password"
+              name="password"
+              type="password"
+              value={params.formData.password}
+              onChange={handleChange}
+              required
+            /> 
             
             <TextField
               select
@@ -220,17 +229,6 @@ function ModalEditor(params) {
               value={params.formData.phone}
               onChange={handleChange}
             /> 
-            <TextField
-              required
-              select
-              name="role"
-              label="Role"
-              value={params.formData.role || "user"}
-              onChange={handleChange}
-            >
-              <MenuItem value="user">User</MenuItem>
-              <MenuItem value="manager">Manager</MenuItem>
-            </TextField>
             <Stack direction="row" gap={2}>
               <Button variant="contained" type="submit">Confirm</Button>
               <Button variant="outlined" onClick={handleClose}>Cancel</Button>
@@ -303,7 +301,7 @@ export default function UsersAdmin(params) {
     email: "",
     gender: "",
     phone: "",
-    role: "",
+    role: "manager",
   });
   
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -427,7 +425,7 @@ export default function UsersAdmin(params) {
                   <TableCell align="right">{row.role}</TableCell>
                   <TableCell align="right">
                     <Stack direction="row" justifyContent="end">
-                      <Button variant="contained" onClick={() => {handleEditOpen(row)}} sx={{marginRight: 1}}>edit</Button>
+                      
                       <Button variant="contained" onClick={() => {handleDelete(row.id, row.email)}} color="error">delete</Button>
                     </Stack>
                   </TableCell>
