@@ -1,82 +1,97 @@
 import { useNavigate } from "react-router-dom"
 import LocationCard from "../components/LocationCard"
-import { useEffect } from "react";
-import { Button } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Button, CircularProgress } from "@mui/material";
+import { getCategoriesAll, getLocations } from "../api/location";
+
+function getCategoryNames(ids, categories) {
+  return ids.map((id) => categories?.find((c) => c.id === id)?.name);
+}
 
 export default function Home(params) {
+  const [locationsLoading, setLocationsLoading] = useState(false)
+  const [categoriesLoading, setCategoriesLoading] = useState(false)
+
+  const [locations, setLocations] = useState(null);
+  const [categories, setCategories] = useState(null);
   const nav = useNavigate();
   useEffect(() => {
     document.title = "Home";
   }, [])
-  
+  useEffect(() => {
+    setLocationsLoading(true)
+    getLocations()
+      .then(res => {
+        setLocations(res.results)
+        console.log("locations:", res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      .finally(() => {
+        setLocationsLoading(false)
+      })
+  }, [])
 
-  const locations = [
-    {
-      id: 1,
-      image: "1.jpg",
-      name: "Charyn Canyon",
-      type: "nature",
-      rating: 4.7,
-    },
-    {
-      id: 2,
-      image: "2.jpg",
-      name: "Kolsay lakes",
-      type: "nature",
-      rating: 4.9,
-    },
-    {
-      id: 3,
-      image: "3.jpg",
-      name: "Kaindy lakes",
-      type: "nature",
-      rating: 4.6,
-    },
-    {
-      id: 4,
-      image: "4.jpg",
-      name: "Turkestan",
-      type: "historical",
-      rating: 4.8,
-    },
-    {
-      id: 5,
-      image: "5.jpg",
-      name: "Astana",
-      type: "city",
-      rating: 4.4,
-    },
-  ]
-  const categories = [
-    'Nature',
-    'Historical',
-    'Sight seeing',
-    'City'
-  ]
+  useEffect(() => {
+    setCategoriesLoading(true)
+      getCategoriesAll()
+       .then(res => {
+         setCategories(res.results)
+         console.log("categories:",res)
+       })
+       .catch(err => {
+         console.log(err)
+       })
+       .finally(() => {
+        setCategoriesLoading(false)
+       })
+   }, [])
+  
 
   return (
     <>
       <div className="main">
-        <div className="categories">
-          Categories:
+        {
+          categoriesLoading && 
+          <CircularProgress size="1rem" />
+        }
+        {
+          categories &&
+          <div className="categories">
+            Categories:
+            {
+              categories.map((c) => (
+                <Button variant="outlined" key={`category-${c.id}`} sx={{borderRadius: "20px"}}>{c.name}</Button>  
+              ))
+            }
+          </div>
+        }
+        <div className="card-grid">
           {
-            categories.map((c, i) => (
-              <Button variant="outlined" key={i} sx={{borderRadius: "20px"}}>{c}</Button>  
+            locationsLoading && 
+            <CircularProgress size="5rem" 
+              sx={{
+                position: "absolute", 
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+              }} 
+            />
+          }
+          {
+            locations &&
+            locations.map((l, i) => (
+              <LocationCard
+                id={l.id}
+                image={l.photo} 
+                name={l.name} 
+                categories={getCategoryNames(l.categories, categories)}
+                nav={nav}
+                key={`location-${i}`}
+              />
             ))
           }
-        </div>
-        <div className="card-grid">
-          {locations.map((l, i) => (
-            <LocationCard
-              id={l.id}
-              image={l.image} 
-              name={l.name} 
-              type={l.type}
-              rating={l.rating} 
-              nav={nav}
-              key={i}
-            />
-          ))}
         </div>
       </div>
     </>

@@ -1,23 +1,47 @@
-import { Divider, Stack, Typography } from "@mui/material";
+import { Box, Divider, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom"
 import TourCard from "../components/TourCard";
-import { Place } from "@mui/icons-material";
-import { useEffect } from "react";
+import { BookmarkBorder, Place } from "@mui/icons-material";
+import { useEffect, useState } from "react";
+import { getCategory, getLocation } from "../api/location";
+import { baseURL } from "../api/initPublic";
 
 export default function Location(params) {
   const { id } = useParams();
   const nav = useNavigate();
+  const [data, setData] = useState(null)
+  const [categories, setCategories] = useState([])
 
-  const data = {
-    image: "/locations/1.jpg",
-    name: "Charyn Canyon",
-    address: "Almaty Region",
-    description: `Charyn Canyon (Шарын шатқалы) is a canyon on the Charyn River in Almaty region and is a part of the Charyn National Park. The canyon is roughly 154 km in length and features many formations formed by the weathering of sedimentary rock. This stunning geological formation is often referred to as the "Grand Canyon of Central Asia."`,
-  }
+  
   useEffect(() => {
-    document.title = data.name;
+    getLocation(id)
+    .then(res => {  
+      console.log(res)
+      setData(res)
+    })
   }, [])
+  
+  useEffect(() => {
+    if(data !== null) {
+      data.categories.forEach(c => {
+        getCategory(c)
+          .then(res => {
+            setCategories((prev) => {
+              if(!prev.includes(res.name)) {
+                return [...prev, res.name]
+              }
+              return prev;
+            })
+          })
+      });
+    }
+  }, [data])
 
+  useEffect(() => {
+    if (data){
+      document.title = data.name
+    }
+  }, [data])
   const tours = [
     {
       image: "1.jpg",
@@ -33,50 +57,62 @@ export default function Location(params) {
       divider={<Divider flexItem/>}
       spacing={2}
     >
-      <div className="location-header">
-        <img src={data.image} alt="" />
-        <div className="location-text">
-          <Typography variant="h4" fontWeight="bold" >{data.name}</Typography>
-          <div className="location-address">
-            <Place color="error" />
-            {data.address}
-          </div>
-          <h4>
-            Category: Nature
-          </h4>
-          <div>
-            {data.description}
+      {
+        data &&
+        <div className="location-header">
+          {
+            data.photo &&
+            <img src={`${baseURL}/${data.photo.split(":8000")[1]}`} alt="" />
+          }
+          <div className="location-text">
+            <Typography variant="h4" fontWeight="bold" >{data.name}</Typography>
+            <div className="location-address">
+              <Place color="error" />
+              {data.address}
+            </div>
+            <Stack direction="row" alignItems="center" mb={2}>
+              {
+                categories && 
+                <>
+                  <BookmarkBorder />
+                  {
+                    categories.join(", ")
+                  }
+                </>
+              }
+            </Stack>
+            <div>
+              {data.description}
+            </div>
           </div>
         </div>
-      </div>
-      <div>
-        {
-          tours.length > 0 ? (
-            <>
-              <Typography variant="h5" marginBottom="10px">
-                Tours, that include this place:
-              </Typography>
-              <div className="card-grid">
-                {tours.map((t, i) => (
-                  <TourCard
-                    id={i}
-                    image={t.image} 
-                    name={t.name} 
-                    agency={t.agency} 
-                    rating={t.rating} 
-                    nav={nav}
-                    key={i}
-                  />
-                ))}
-              </div>
-            </>
-          ) : (
+      }
+      {
+        tours.length > 0 ? (
+          <>
             <Typography variant="h5" marginBottom="10px">
-              No tours available at the moment
+              Tours, that include this place:
             </Typography>
-          )
-        }
-      </div>
+            <div className="card-grid">
+              {tours.map((t, i) => (
+                <TourCard
+                  id={i}
+                  image={t.image} 
+                  name={t.name} 
+                  agency={t.agency} 
+                  rating={t.rating} 
+                  nav={nav}
+                  key={i}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <Typography variant="h5" marginBottom="10px">
+            No tours available at the moment
+          </Typography>
+        )
+      }
     </Stack>
   )
 }
