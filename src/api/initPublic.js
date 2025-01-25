@@ -1,6 +1,6 @@
 import axios from "axios";
-export const baseURL = process.env.BACKEND_URL;
-export const apiKey = process.env.MAP_API_KEY;
+export const baseURL = import.meta.env.VITE_BACKEND_URL;
+export const apiKey = import.meta.env.VITE_MAP_API_KEY;
 
 
 const axiosPublic = axios.create({
