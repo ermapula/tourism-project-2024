@@ -1,4 +1,4 @@
-import { Explore, Menu, Person, Place, ReceiptLongOutlined } from "@mui/icons-material";
+import { Bookmark, Explore, Menu, Person, Place, ReceiptLongOutlined } from "@mui/icons-material";
 import { Box, Divider, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Stack } from "@mui/material";
 import { useState, useEffect, useContext } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -45,6 +45,11 @@ export default function Admin(params) {
   ]
 
   const adminLinks = [
+    { 
+      text: "Categories",
+      path: "/admin/categories",
+      icon: <Bookmark />,
+    },
     { 
       text: "Locations",
       path: "/admin/locations",
@@ -149,7 +154,7 @@ export default function Admin(params) {
             width: "100%"
           }}
         >
-          <Outlet />
+          <Outlet context={{permission: mode}} />
         </Box>
       </Stack>
     </>
