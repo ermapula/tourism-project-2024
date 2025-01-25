@@ -1,6 +1,6 @@
 import axios from "axios";
-export const baseURL = process.env.REACT_APP_BACKEND_URL;
-export const apiKey = process.env.REACT_APP_MAP_API_KEY;
+export const baseURL = process.env.BACKEND_URL;
+export const apiKey = process.env.MAP_API_KEY;
 
 
 const axiosPublic = axios.create({
