@@ -1,8 +1,10 @@
 import axios from "axios";
+export const baseURL = process.env.BACKEND_URL;
+export const apiKey = process.env.MAP_API_KEY;
+
 
 const axiosPublic = axios.create({
-  // baseURL: "http://localhost:8000",
-  baseURL: "http://143.110.255.182",
+  baseURL: baseURL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
