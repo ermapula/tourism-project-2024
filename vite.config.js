@@ -1,20 +1,21 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { baseURL } from './src/api/initPublic'
 
 // https://vite.dev/config/
+
+const baseUrl = process.env.VITE_BACKEND_URL || "http://localhost:8000";
 
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
       '/api': {
-        target: baseURL,
+        target: baseUrl,
         changeOrigin: true,
         secure: false,
       },
       '/media': {
-        target: baseURL,
+        target: baseUrl,
         changeOrigin: true,
         secure: false,
       },
