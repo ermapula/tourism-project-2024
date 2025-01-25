@@ -1,5 +1,5 @@
 import { Close } from "@mui/icons-material";
-import { Box, Button, IconButton, MenuItem, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, MenuItem, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { createUser, deleteUser, getUsers, updateUser } from "../../api/admin";
 
@@ -102,11 +102,11 @@ function TopToolBar(params) {
 
 function ModalEditor(params) {
   
-  const handleOpen = () => {
+  function handleOpen() {
     params.setOpen(true)
     params.setMode(0)
-  };
-  const handleClose = () => {
+  }
+  function handleClose() {
     params.setOpen(false)
     params.setUserId(null)
     params.setFormData({
@@ -117,7 +117,7 @@ function ModalEditor(params) {
       phone: "",
       role: "",
     })
-  };
+  }
   
   function handleChange(e) {
     const { name, value } = e.target;
@@ -293,6 +293,7 @@ function ConfirmModal(params) {
 }
 
 export default function UsersAdmin(params) {
+  const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState(0)
   const [userId, setUserId] = useState(null)
@@ -319,6 +320,7 @@ export default function UsersAdmin(params) {
 
 
   async function fetchData(link) {
+    setLoading(true)
     getUsers(link)
       .then((res) => {
         setData(res.results)
@@ -329,6 +331,9 @@ export default function UsersAdmin(params) {
       })
       .catch(err => {
         console.log(err)
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }
 
@@ -387,6 +392,17 @@ export default function UsersAdmin(params) {
         update={fetchData}
       />
       <Paper>
+        {
+          loading && 
+          <CircularProgress size="5rem" 
+            sx={{
+              position: "absolute", 
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }} 
+          />
+        }
         <TopToolBar />
         <Table>
           <TableHeader 
