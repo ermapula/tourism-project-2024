@@ -1,5 +1,5 @@
 import { Close } from "@mui/icons-material";
-import { Box, Button, IconButton, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, IconButton, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { createCategory, deleteCategory, getCategories, updateCategory } from "../../api/admin";
 
@@ -13,7 +13,7 @@ const headers = [
   },
   {
     id: "name",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Name",
   },
@@ -72,17 +72,17 @@ function TopToolBar(params) {
 
 function ModalEditor(params) {
   
-  const handleOpen = () => {
+  function handleOpen() {
     params.setOpen(true)
     params.setMode(0)
-  };
-  const handleClose = () => {
+  }
+  function handleClose() {
     params.setOpen(false)
     params.setCategoryId(null)
     params.setFormData({
       name: ""
     })
-  };
+  }
   
   function handleChange(e) {
     const { name, value } = e.target;
@@ -217,6 +217,7 @@ function ConfirmModal(params) {
 }
 
 export default function CategoriesAdmin(params) {
+  const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState(0)
   const [categoryId, setCategoryId] = useState(null)
@@ -238,6 +239,7 @@ export default function CategoriesAdmin(params) {
 
 
   async function fetchData(link) {
+    setLoading(true)
     getCategories(link)
       .then((res) => {
         setData(res.results)
@@ -248,6 +250,9 @@ export default function CategoriesAdmin(params) {
       })
       .catch(err => {
         console.log(err)
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }
 
@@ -302,6 +307,17 @@ export default function CategoriesAdmin(params) {
         update={fetchData}
       />
       <Paper>
+        {
+          loading && 
+          <CircularProgress size="5rem" 
+            sx={{
+              position: "absolute", 
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }} 
+          />
+        }
         <TopToolBar />
         <Table>
           <TableHeader 
@@ -318,7 +334,7 @@ export default function CategoriesAdmin(params) {
                   sx={{ '&:hover': {bgcolor: "rgb(0, 0, 0, 0.1)"} }}
                 >
                   <TableCell align="right">{row.id}</TableCell>
-                  <TableCell align="right">{row.name}</TableCell>
+                  <TableCell align="left">{row.name}</TableCell>
                   <TableCell align="right">
                     <Stack direction="row" justifyContent="end">
                       <Button variant="contained" onClick={() => {handleEditOpen(row)}} sx={{marginRight: 1}}>edit</Button>
