@@ -3,10 +3,9 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig(({mode}) => {
-  const env = loadEnv(mode, process.cwd(), 'VITE_BACKEND_URL')
+  const env = loadEnv(mode, process.cwd(), 'VITE_')
   console.log("env:", env)
   return {
-    plugins: [react()],
     server: {
       proxy: {
         '/api': {
@@ -20,6 +19,7 @@ export default defineConfig(({mode}) => {
           secure: false,
         },
       }
-    }
+    },
+    plugins: [react()],
   }
 })
