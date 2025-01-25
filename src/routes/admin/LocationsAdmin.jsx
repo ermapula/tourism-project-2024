@@ -79,6 +79,7 @@ const headers = [
     numeric: true,
     disablePadding: false,
     label: "Actions",
+    permissionNeeded: true
   },
 ]
 
@@ -93,7 +94,10 @@ function TableHeader(params) {
   return (
     <TableHead>
       <TableRow>
-        {headers.map((h) => (
+        {headers.map((h) => 
+        
+        (
+          !h.permissionNeeded &&
           <TableCell
             key={h.id}
             align={h.numeric ? 'right' : 'left'}
@@ -166,6 +170,10 @@ function ModalEditor(params) {
   function handleImageChange(e) {
     const file = e.target.files[0];
     console.log({photo: file})
+    if(file.size > 1048576) {
+      alert("Image is too large")
+      return
+    }
     params.setFormData(prev => ({
       ...prev,
       photo: file
@@ -237,7 +245,10 @@ function ModalEditor(params) {
 
   return (
     <>
-      <Button variant="contained" onClick={handleOpen}>+Add</Button>
+      {
+        params.permission == 1 && 
+        <Button variant="contained" onClick={handleOpen}>+Add</Button>
+      }
       <Modal
         open={params.open}
         onClose={(e, reason) => {
@@ -301,7 +312,7 @@ function ModalEditor(params) {
                 component="label"
                 sx={{ textTransform: "none" }}
               >
-                Upload Location Picture
+                Upload Location Picture (&lsaquo;1Mb)
                 <input
                   type="file"
                   accept="image/*"
@@ -578,6 +589,7 @@ export default function LocationsAdmin(params) {
         setFormData={setFormData} 
         categories={categories}
         setLoading={setLoading}
+        permission={permission}
       />
       <ConfirmModal 
         open={confirmOpen}
