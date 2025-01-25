@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { createLocation, deleteLocation, getCategoriesAll, getLocations, updateLocation } from "../../api/admin";
 import { Map, Placemark, SearchControl, YMaps, ZoomControl } from "@pbe/react-yandex-maps";
-import { baseURL, mapApiKey } from "../../api/initPublic";
+import { apiKey, baseURL } from "../../api/initPublic";
 
 const regions = [
   "Abai Region",
@@ -333,7 +333,7 @@ function ModalEditor(params) {
                 },
               }}
             /> 
-            <YMaps query={{ apikey: mapApiKey}}>
+            <YMaps query={{ apikey: apiKey}}>
               <Map
                 defaultState={{ center: coordinates ? coordinates : [43.25, 76.95], zoom: 10 }}
                 width="100%"
