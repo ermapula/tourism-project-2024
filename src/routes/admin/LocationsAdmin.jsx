@@ -299,7 +299,7 @@ function ModalEditor(params) {
                   src={
                     params.formData.photo instanceof File ?
                     URL.createObjectURL(params.formData.photo) :
-                    `${baseURL}/${params.formData.photo.split(":8000")[1]}` 
+                    params.formData.photo
                   }
                   sx={{
                     maxWidth: "50%",
@@ -626,7 +626,7 @@ export default function LocationsAdmin(params) {
                   <TableCell>
                     {
                       row.photo &&
-                      <Box component="img" src={`${baseURL}/${row.photo.split(":8000")[1]}`} width="150px" />
+                      <Box component="img" src={row.photo} width="150px" />
                     }
                   </TableCell>
                   <TableCell align="right">{row.id}</TableCell>

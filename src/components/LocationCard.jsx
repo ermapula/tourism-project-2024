@@ -10,7 +10,7 @@ export default function LocationCard({id, image, name, categories, rating, nav})
           image && 
           <CardMedia 
             component="img"
-            image={`${baseURL}/${image.split(":8000")[1]}`}
+            image={image}
             alt={`${name} image`}
             sx={{aspectRatio: "16 / 9", objectPosition: "top"}}
           />
