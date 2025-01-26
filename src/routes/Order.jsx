@@ -3,14 +3,30 @@ import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "./auth/AuthContext";
 import { orderTicket } from "../api/ticket";
+import { getTour } from "../api/tour";
 
 export default function Order(params) {
   const [loading, setLoading] = useState(false)
+  const [loadingTour, setLoadingTour] = useState(false)
   const { user } = useContext(AuthContext);
+  const [tour, setTour] = useState(null)
   
   const nav = useNavigate();
   const { id } = useParams();
   
+  useEffect(() => {
+    setLoadingTour(true)
+    getTour(id)
+      .then(res => {
+        setTour(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      .finally(() => {
+        setLoadingTour(false)
+      })
+  }, [])
   useEffect(() => {
     document.title = "Order a ticket";
   }, [])
@@ -56,16 +72,21 @@ export default function Order(params) {
               <Typography width={100}>Price</Typography>
             </Stack>
             <Divider sx={{marginTop: 2, marginBottom: 2}} />
-            <Stack
-              direction="row"
-              gap={2}
-              alignItems="center"
-            >
-              <Box component="img" src="../tours/1.jpg" alt="Tour image" height={100} />
-              <Typography flex={1}>Charyn Tour</Typography>
-              <Typography width={100}>&#8376;8000</Typography>
-              
-            </Stack>
+            {
+              loadingTour ?
+              <CircularProgress />
+              :
+              <Stack
+                direction="row"
+                gap={2}
+                alignItems="center"
+              >
+                <Box component="img" src={tour.photo} alt="Tour image" height={100} />
+                <Typography flex={1}>{tour.title}</Typography>
+                <Typography width={100}>&#8376;{tour.price}</Typography>
+                
+              </Stack>
+            }
             
           </Card>
         </Box>
