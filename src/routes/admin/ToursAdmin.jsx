@@ -1,15 +1,13 @@
-import { Close, CloudUpload, Delete } from "@mui/icons-material";
-import { Autocomplete, Box, Button, Checkbox, IconButton, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Tooltip, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
+import { Close, CloudUpload } from "@mui/icons-material";
+import { Autocomplete, Box, Button, Chip, CircularProgress, IconButton, MenuItem, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { createTour, deleteTour, getLocations, getTours, updateTour } from "../../api/admin";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from "dayjs";
 
 const headers = [
-  {
-    id: "image",
-    numeric: false,
-    disablePadding: true,
-    label: "Image",
-    width: "200px",
-  },
   {
     id: "id",
     numeric: true,
@@ -24,10 +22,10 @@ const headers = [
     label: "Name",
   },
   {
-    id: "location",
+    id: "locations",
     numeric: true,
     disablePadding: false,
-    label: "Location",
+    label: "Locations",
   },
   {
     id: "price",
@@ -36,16 +34,34 @@ const headers = [
     label: "Price",
   },
   {
-    id: "dates",
-    numeric: true,
-    disablePadding: false,
-    label: "Dates",
-  },
-  {
     id: "description",
     numeric: true,
     disablePadding: false,
     label: "Description",
+  },
+  {
+    id: "status",
+    numeric: true,
+    disablePadding: false,
+    label: "Status",
+  },
+  {
+    id: "max_participants",
+    numeric: true,
+    disablePadding: false,
+    label: "Maximum Participants",
+  },
+  {
+    id: "start_date",
+    numeric: true,
+    disablePadding: false,
+    label: "Start Date",
+  },
+  {
+    id: "end_date",
+    numeric: true,
+    disablePadding: false,
+    label: "End Date",
   },
   {
     id: "actions",
@@ -55,20 +71,11 @@ const headers = [
   },
 ]
 
-
-
 function TableHeader(params) {
-  const { numSelected, rowCount, onSelectAllClick } = params;
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-          />
-        </TableCell>
+        
         {headers.map((h) => (
           <TableCell
             key={h.id}
@@ -88,24 +95,12 @@ function TableHeader(params) {
 }
 
 function TopToolBar(params) {
-  const { numSelected } = params;
   return (
     <Toolbar
       sx={{
-        bgcolor: numSelected > 0 && "var(--light-blue)",
         mt: 2
       }}
       >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
         <Typography
           sx={{ flex: '1 1 100%' }}
           variant="h6"
@@ -114,65 +109,105 @@ function TopToolBar(params) {
         >
           Tours
         </Typography>
-      )}
-      <Tooltip title="Delete">
-        <IconButton>
-          <Delete />
-        </IconButton>
-      </Tooltip>
     </Toolbar>
   );
 }
 
 function ModalEditor(params) {
-  const [open, setOpen] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "",
-    image: null,
-    description: "",
-    price: 0,
-    dates: "",
-  });
-  const [images, setImages] = useState([])
-  const locations = [
-     "Charyn Canyon",
-     "Kolsay lakes",
-     "Kayindy lakes",
-     "Turkestan",
-     "Astana",
-  ];
-  
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  function handleOpen() {
+    params.setOpen(true)
+    params.setMode(0)
+    console.log("form:", params.formData)
+  }
+  function handleClose() {
+    params.setOpen(false)
+    params.setTourId(null)
+    params.setFormData({
+      title: "",
+      locations: [],
+      price: 0,
+      description: "",
+      status: "",
+      max_participants: 0,
+      start_date: null,
+      end_date: null,
+    })
+  }
   
   function handleChange(e) {
     const { name, value } = e.target;
-    setFormData(prev => ({ 
+    params.setFormData(prev => ({ 
       ...prev,
       [name]: value 
     }));
   }
 
-  function handleImages(e) {
-    setImages([...images, e.target.files[0]])
-    console.log(images)
+  function handleImageChange(e) {
+    const file = e.target.files[0];
+    console.log({photo: file})
+    if(file.size > 1048576) {
+      alert("Image is too large")
+      return
+    }
+    params.setFormData(prev => ({
+      ...prev,
+      photo: file
+    }))
   }
 
-  function handleImageRemove(id) {
-    let newImages = images.filter((_, i) => i !== id);
-    console.log('filtered', newImages)
-    setImages(newImages)
+  function handleLocationSelect(e) {
+    const id = e.target.value;
+    if (!params.formData.locations.includes(id)) {
+      params.setFormData(prev => ({
+        ...prev,
+        locations: [...prev.locations, id],
+      }))
+    }
+  }
+
+  function handleLocationRemove(id) {
+    params.setFormData(prev => ({
+      ...prev,
+      locations: prev.locations.filter((i) => i !== id),
+    }))
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    if(images){
-      formData['image'] = images[0].name;
+    params.setLoading(true)
+    const form = new FormData();
+    form.append("title", params.formData.title);
+    form.append("description", params.formData.description);
+    form.append("price", params.formData.price);
+    form.append("status", "available");
+    form.append("max_participants", params.formData.max_participants);
+    form.append("start_date", dayjs(params.formData.start_date).toISOString());
+    form.append("end_date", dayjs(params.formData.end_date).toISOString());
+    // if(params.formData.photo instanceof File) {
+    //   form.append("photo", params.formData.photo);
+    // }
+    params.formData.locations.forEach(location => {
+      form.append("locations", location);
+    }); 
+    if(params.mode) {
+      updateTour(params.tourId, form)
+        .then(res => {
+          params.update()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+        .finally(() => params.setLoading(false))
+      } else {
+        createTour(form)
+        .then(res => {
+          params.update()
+        })
+        .catch(err => {
+          console.log(err)
+        })
+        .finally(() => params.setLoading(false))
     }
-    formData['id'] = params.id + 1;
-    params.addTour(formData)
     handleClose();
   }
 
@@ -180,8 +215,12 @@ function ModalEditor(params) {
     <>
       <Button variant="contained" onClick={handleOpen}>+Add new tour</Button>
       <Modal
-        open={open}
-        onClose={handleClose}
+        open={params.open}
+        onClose={(e, reason) => {
+          if(reason !== 'backdropClick') {
+            handleClose()
+          }
+        }}
       >
         <Box
           sx={{
@@ -198,7 +237,7 @@ function ModalEditor(params) {
           }}
         >
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-            <Typography variant="body">Add tour</Typography>
+            <Typography variant="body">{params.mode ? 'Edit the tour' : 'Add a tour'}</Typography>
             <IconButton onClick={handleClose}>
               <Close />
             </IconButton>
@@ -210,79 +249,114 @@ function ModalEditor(params) {
           >
             <TextField 
               label="Tour name"
-              name="name"
-              value={formData.name}
+              name="title"
+              value={params.formData.title}
               onChange={handleChange}
               required
             /> 
-            <Box>
-              <div>Tour cover images:</div>
+            {/* <Box>
+              {
+                params.formData.photo && 
+                <Box
+                  component="img"
+                  src={
+                    params.formData.photo instanceof File ?
+                    URL.createObjectURL(params.formData.photo) :
+                    `${baseURL}/${params.formData.photo.split(":8000")[1]}` 
+                  }
+                  sx={{
+                    maxWidth: "50%",
+                    display: "block"
+                  }}
+                />
+              }
               <Button
-                component="label"
-                role={undefined}
                 variant="contained"
-                tabIndex={-1}
-                startIcon={<CloudUpload />}
-                sx={{textTransform: "none"}}
+                component="label"
+                sx={{ textTransform: "none" }}
               >
-                Upload Images
+                Upload Tour Picture (&lsaquo;1Mb)
                 <input
-                  hidden
                   type="file"
-                  onChange={handleImages}
-                  multiple
+                  accept="image/*"
+                  hidden
+                  onChange={handleImageChange}
                 />
               </Button>
-              <Stack>
-                {images.map((im, id) => (
-                  <Stack key={id} direction="row" alignItems="center">
-                    <div>
-                      {im.name}
-                    </div>
-                    <IconButton onClick={() => handleImageRemove(id)}>
-                      <Close />
-                    </IconButton>
-                  </Stack>
-                ))}
-              </Stack>
-            </Box>
-            <Autocomplete 
-              disablePortal
-              options={locations}
-              name="location"
-              value={formData.location} 
-              onChange={(e, v) => {
-                setFormData(prev => ({
-                  ...prev,
-                  location: v
-                }))
-              }} 
-              renderInput={(params) => 
-              <TextField 
-                {...params} 
-                label="Location"
-                required
-              />}
-              
-            />
+            </Box> */}
+            {
+              params.formData.locations.length !== 0 &&
+              <Box>
+                {
+                params.formData.locations?.map((id) => {
+                  const location = params.locations.find((l) => l.id === id);
+                  return (
+                    <Chip
+                      key={`location-selected-${id}`}
+                      label={location?.name}
+                      onDelete={() => handleLocationRemove(id)}
+                    />
+                  );
+                })
+                }
+              </Box>
+            }
+            <TextField
+              select
+              name="locations"
+              label="Locations"
+              value=""
+              onChange={handleLocationSelect}
+              slotProps={{select: { MenuProps: { slotProps: { paper: {sx: {maxHeight: "20rem"}}}}}}}
+            >
+              { 
+                params.locations?.map((v) => (
+                  <MenuItem key={`location-${v.id}`} value={v.id}>{v.name}</MenuItem>
+                ))
+              }
+            </TextField>
             <TextField 
-              label="Tour Dates"
-              name="dates"
-              value={formData.dates}
+              type="number"
+              label="Price, &#8376;"
+              name="price"
+              value={params.formData.price}
               onChange={handleChange}
               required
-            /> 
-            <TextField 
-              label="Description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
+              onFocus={(e) => {e.target.select()}}
             /> 
             <TextField 
               type="number"
-              label="Price"
-              name="price"
-              value={formData.price}
+              label="Maximum participants"
+              name="max_participants"
+              value={params.formData.max_participants}
+              onChange={handleChange}
+              required
+              onFocus={(e) => {e.target.select()}}
+            /> 
+            <LocalizationProvider dateAdapter={AdapterDayjs} >
+              <DateTimePicker 
+                label="Start Date"
+                name="start_date"
+                value={params.formData.start_date}
+                onChange={(v) => params.setFormData(prev =>({...prev, start_date: v}))}
+                format="DD.MM.YYYY HH.mm"
+                required
+              /> 
+            </LocalizationProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs} >
+              <DateTimePicker 
+                label="End Date"
+                name="end_date"
+                value={params.formData.end_date}
+                onChange={(v) => params.setFormData(prev =>({...prev, end_date: v}))}
+                format="DD.MM.YYYY HH.mm"
+                required
+              /> 
+            </LocalizationProvider>
+            <TextField 
+              label="Description"
+              name="description"
+              value={params.formData.description}
               onChange={handleChange}
               required
             /> 
@@ -297,129 +371,234 @@ function ModalEditor(params) {
   )
 }
 
+function ConfirmModal(params) {
+
+  function handleClose() {
+    params.setId(null)
+    params.setOpen(false)
+  }
+  function handleSubmit() {
+    params.setLoading(true)
+    deleteTour(params.id)
+      .then(res => {
+        params.update()
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      .finally(() => params.setLoading(false))
+    handleClose()
+  }
+
+  return (
+    <>
+      <Modal
+        open={params.open}
+        onClose={handleClose}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 200,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            placeItems: "center",
+            pt: 2,
+            px: 4,
+            pb: 3,
+          }}
+        >
+          <Box mb={1}>
+            Delete tour {params.name}?
+          </Box>
+          <Stack direction="row" spacing={2}>
+            <Button variant="contained" color="error" onClick={handleSubmit}>Confirm</Button>
+            <Button variant="contained" color="" onClick={handleClose}>Cancel</Button>
+          </Stack>
+        </Box>
+      </Modal>
+    </>
+  )
+}
+
 export default function ToursAdmin(params) {
-  const [data, setData] = useState([{
-    image: '1.jpg',
-    id: 1,
-    name: "Charyn Tour",
-    location: "Charyn Canyon",
-    price: 8000,
-    dates: "Weekend",
-    description: `Discover the stunning beauty of Charyn Canyon. Located just a few hours from Almaty, this tour offers breathtaking views, fascinating rock formations, and a chance to explore the famous Valley of Castles. Perfect for nature enthusiasts and adventure seekers, this day trip includes guided hikes, a picnic by the Charyn River, and plenty of photo opportunities.`,
-  }])
-  const [selected, setSelected] = useState([]);
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState(0)
+
+  const [tourId, setTourId] = useState(null)
+  const [formData, setFormData] = useState({
+    title: "",
+    locations: [],
+    description: "",
+    price: 0,
+    status: "",
+    max_participants: 0,
+    start_date: null,
+    end_date: null,
+  });
+
+  const [locations, setLocations] = useState([])
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState(null)
+  const [deleteName, setDeleteName] = useState(null)
+
+  const [count, setCount] = useState(0);
+  const [next, setNext] = useState(null);
+  const [prev, setPrev] = useState(null);
+  const [data, setData] = useState([])
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const rowsPerPage = 10;
 
-  function handleSelectAll(e) {
-    if (e.target.checked) {
-      const elem = data.map((d) => d.id);
-      setSelected(elem);
-      return;
-    }
-    setSelected([]);
-  }
-
-  function handleClick(e, id) {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-    setSelected(newSelected);
+  async function fetchData(link) {
+    setLoading(true)
+    getTours(link)
+      .then((res) => {
+        setData(res.results)
+        setCount(res.count)
+        setNext(res.next ? res.next.split(":8000")[1] : null)
+        setPrev(res.previous ? res.previous.split(":8000")[1] : null)
+        console.log("tours:", res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
   
-  function handleChangePage(e, newPage) {
+  useEffect(() => {
+    fetchData(null)
+  }, [])
+  
+  useEffect(() => {
+    getLocations()
+      .then((res) => {
+        setLocations(res.results)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [])
+
+  async function handleChangePage(e, newPage) {
+    if(newPage > page && next) {
+      await fetchData(next)
+    } else if(newPage < page && prev) {
+      await fetchData(prev)
+    }
     setPage(newPage);
   };
 
-  function handleChangeRowsPerPage(e) {
-    setRowsPerPage(parseInt(e.target.value, 10));
-    setPage(0);
-  };
-
-  const rows = useMemo(() =>
-    [...data].slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [data, page, rowsPerPage], 
-  );
-
-  function handleAddTour(d) {
-    setData([...data, d])
+  function handleEditOpen(data) {
+    setMode(1)
+    setOpen(true)
+    setTourId(data.id)
+    setFormData({
+      title: data.title || "",
+      locations: [...data.locations],
+      description: data.description || "",
+      price: data.price || 0,
+      status: data.status || "",
+      max_participants: data.max_participants || 0,
+      start_date: dayjs(data.start_date) || null,
+      end_date: dayjs(data.end_date) || null,
+    })
   }
-  
+
+  function handleDelete(id, name) {
+    setDeleteId(id)
+    setDeleteName(name)
+    setConfirmOpen(true)
+  }
+
+  function getLocationsNames(ids) {
+    return ids.map((id) => locations?.find((c) => c.id === id)?.name);
+  }
+
   return (
     <>
-      <ModalEditor addTour={handleAddTour} id={data.length} />
+      <ModalEditor 
+        mode={mode} 
+        setMode={setMode} 
+        open={open} 
+        setOpen={setOpen} 
+        update={fetchData}
+        tourId={tourId}
+        setTourId={setTourId}
+        formData={formData}
+        setFormData={setFormData}
+        setLoading={setLoading}
+        locations={locations}
+      />
+      <ConfirmModal 
+        open={confirmOpen}
+        setOpen={setConfirmOpen}
+        id={deleteId}
+        setId={setDeleteId}
+        name={deleteName}
+        update={fetchData}
+        setLoading={setLoading}
+      />
       <Paper>
-        <TopToolBar numSelected={selected.length} />
-        <Table>
-          <TableHeader 
-            onSelectAllClick={handleSelectAll} 
-            rowCount={data.length}
-            numSelected={selected.length}
+        {
+          loading && 
+          <CircularProgress size="5rem" 
+            sx={{
+              position: "absolute", 
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }} 
           />
+        }
+        <TopToolBar />
+        <Table>
+          <TableHeader />
           <TableBody>
-            {rows.map((row, i) => {
-              const isItemSelected = selected.includes(row.id);
-              const labelId = `enhanced-table-checkbox-${i}`;
+            {data.map((row, i) => {
               
               return (
                 <TableRow 
-                  hover
-                  onClick={(event) => handleClick(event, row.id)}
-                  role="checkbox"
-                  aria-checked={isItemSelected}
                   tabIndex={-1}
                   key={i}
-                  selected={isItemSelected}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{ '&:hover': {bgcolor: "rgb(0, 0, 0, 0.1)"} }}
                 >
-                  <TableCell padding="checkbox">
-                    <Checkbox 
-                      onClick={(event) => handleClick(event, row.id)}
-                      checked={isItemSelected}
-                      inputProps={{
-                        'aria-labelledby': labelId,
-                      }}
-                    />
-                  </TableCell>
-                  <TableCell><Box component="img" src={`../tours/${row.image}`} width="150px" /></TableCell>
                   <TableCell align="right">{row.id}</TableCell>
-                  <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.location}</TableCell>
+                  <TableCell align="right">{row.title}</TableCell>
+                  <TableCell align="right">{getLocationsNames(row.locations)}</TableCell>
                   <TableCell align="right">&#8376;{row.price}</TableCell>
-                  <TableCell align="right">{row.dates}</TableCell>
-                  <TableCell align="right" sx={{width: "40%"}}>{row.description}</TableCell>
+                  <TableCell align="right" sx={{maxWidth: "20rem"}}>{row.description}</TableCell>
+                  <TableCell align="right">{row.status}</TableCell>
+                  <TableCell align="right">{row.max_participants}</TableCell>
+                  <TableCell align="right">{dayjs(row.start_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
+                  <TableCell align="right">{dayjs(row.end_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
                   <TableCell align="right">
-                    <Stack direction="row" justifyContent="end">
-                      <Button variant="contained" sx={{marginRight: 1}}>edit</Button>
-                      <Button variant="contained" color="error">delete</Button>
-                    </Stack>
-                  </TableCell>
+                      <Stack direction="row" justifyContent="end">
+                        <Button variant="contained" onClick={() => {handleEditOpen(row)}} sx={{marginRight: 1}}>edit</Button>
+                        <Button variant="contained" onClick={() => {handleDelete(row.id, row.title)}} color="error">delete</Button>
+                      </Stack>
+                    </TableCell>
                 </TableRow>
               )
             })}
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[]}
           component="div"
-          count={data.length}
+          count={count}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+          nextIconButtonProps={{disabled: !next}}
+          backIconButtonProps={{disabled: !prev}}
         />
       </Paper>
     </>
