@@ -108,13 +108,21 @@ export async function getTour(id) {
   return response.data;
 }
 
-export async function addTour(data) {
-  const response = await axiosPrivate.post("/api/tours/", data);
+export async function createTour(data) {
+  const response = await axiosPrivate.post("/api/tours/", data, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
   return response.data;
 }
 
 export async function updateTour(id, data) {
-  const response = await axiosPrivate.patch(`/api/tours/${id}/`, data);
+  const response = await axiosPrivate.patch(`/api/tours/${id}/`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
   return response.data;
 }
 
@@ -134,7 +142,7 @@ export async function getTicket(id) {
   return response.data;
 }
 
-export async function addTicket(data) {
+export async function createTicket(data) {
   const response = await axiosPrivate.post("/api/tickets/", data);
   return response.data;
 }
