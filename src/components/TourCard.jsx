@@ -1,7 +1,7 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography } from "@mui/material";
 import { Star } from "@mui/icons-material";
 
-export default function TourCard({id, image, name, agency, rating, nav}) {
+export default function TourCard({id, image, name, price, nav}) {
 
   return (
     <Card className="location-card">
@@ -9,6 +9,7 @@ export default function TourCard({id, image, name, agency, rating, nav}) {
         <CardMedia 
           component="img"
           image={`/tours/${image}`}
+          alt={`Tour ${name}`}
           sx={{aspectRatio: "16 / 9", objectPosition: "top"}}
         />
         <CardContent>
@@ -16,14 +17,8 @@ export default function TourCard({id, image, name, agency, rating, nav}) {
             {name}
           </Typography>
           <Typography variant="body">
-            {agency}
+            &#8376;{price}
           </Typography>
-          <div className="location-rating">
-            <span>
-              <Star sx={{fontSize: 12}} />
-            </span>
-            {rating}
-          </div>
         </CardContent>
       </CardActionArea>
     </Card>
