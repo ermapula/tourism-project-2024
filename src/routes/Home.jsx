@@ -13,7 +13,7 @@ export default function Home(params) {
   const [categoriesLoading, setCategoriesLoading] = useState(false)
 
   const [locations, setLocations] = useState(null);
-  const [categories, setCategories] = useState(null);
+  const [categories, setCategories] = useState([]);
   const nav = useNavigate();
   useEffect(() => {
     document.title = "Home";
@@ -57,7 +57,7 @@ export default function Home(params) {
           <CircularProgress size="1rem" />
         }
         {
-          categories &&
+          categories.length !== 0 &&
           <div className="categories">
             Categories:
             {
