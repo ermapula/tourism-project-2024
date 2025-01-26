@@ -325,7 +325,7 @@ export default function UsersAdmin(params) {
         setCount(res.count)
         setNext(res.next ? res.next.split(":8000")[1] : null)
         setPrev(res.previous ? res.previous.split(":8000")[1] : null)
-        console.log(res)
+        console.log("users:", res)
       })
       .catch(err => {
         console.log(err)

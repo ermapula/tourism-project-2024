@@ -246,7 +246,7 @@ export default function CategoriesAdmin(params) {
         setCount(res.count)
         setNext(res.next ? res.next.split(":8000")[1] : null)
         setPrev(res.previous ? res.previous.split(":8000")[1] : null)
-        console.log(res)
+        console.log("categories", res)
       })
       .catch(err => {
         console.log(err)
@@ -321,10 +321,9 @@ export default function CategoriesAdmin(params) {
         <TopToolBar />
         <Table>
           <TableHeader 
-            rowCount={data.length}
           />
           <TableBody>
-            {data.map((row, i) => {
+            {data && data.map((row, i) => {
               
               return (
                 <TableRow 

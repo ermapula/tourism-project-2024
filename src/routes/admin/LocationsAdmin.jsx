@@ -632,7 +632,7 @@ export default function LocationsAdmin(params) {
                   <TableCell align="right">{row.id}</TableCell>
                   <TableCell align="right">{row.name}</TableCell>
                   <TableCell align="right">{row.address}</TableCell>
-                  <TableCell align="right" sx={{width: "40%"}}>{row.description}</TableCell>
+                  <TableCell align="right" sx={{width: "30rem"}}>{row.description}</TableCell>
                   <TableCell align="right">{row.region}</TableCell>
                   <TableCell align="right">{getCategoryNames(row.categories).join(", ")}</TableCell>
                   {
