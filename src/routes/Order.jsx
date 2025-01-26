@@ -1,33 +1,33 @@
-import { Box, Button, Card, Divider, Stack, TextField, Typography } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, Button, Card, CircularProgress, Divider, Stack, TextField, Typography } from "@mui/material";
+import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "./auth/AuthContext";
+import { orderTicket } from "../api/ticket";
 
 export default function Order(params) {
+  const [loading, setLoading] = useState(false)
+  const { user } = useContext(AuthContext);
+  
+  const nav = useNavigate();
+  const { id } = useParams();
+  
   useEffect(() => {
     document.title = "Order a ticket";
   }, [])
-
-  const nav = useNavigate();
-  const { id } = useParams();
-  const [quantity, setQuantity] = useState(1);
-  const [formData, setFormData] = useState({
-    name: "Samat",
-    phone: "87776543210",
-    description: "",
-  });
   
-  function handleChange(e) {
-    const {name, value} = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }))
-  }
   function handleSubmit(e) {
-    formData.quantity = quantity;
     e.preventDefault();
-    console.log("Form Data:", formData);
-    nav('/profile')
+    setLoading(true)
+    orderTicket(id)
+      .then(res => {
+        nav('/profile')
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
   return (
     <>
@@ -38,7 +38,7 @@ export default function Order(params) {
         gap={2}
         sx={{
           p: 4,
-          width: "50%",
+          width: "40rem",
           pl: 20
         }} 
       >
@@ -61,7 +61,7 @@ export default function Order(params) {
               gap={2}
               alignItems="center"
             >
-              <Box component="img" src="../tours/1.jpg" height={100} />
+              <Box component="img" src="../tours/1.jpg" alt="Tour image" height={100} />
               <Typography flex={1}>Charyn Tour</Typography>
               <Typography width={100}>&#8376;8000</Typography>
               
@@ -69,30 +69,20 @@ export default function Order(params) {
             
           </Card>
         </Box>
-        <Stack gap={2}>
-          <TextField
-            label="Name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-          <TextField
-            label="Phone number"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-          />      
-          {/* <TextField
-            label="Additional Information"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          /> */}
-        </Stack>
+        <TextField
+          label="For:"
+          value={user ? `${user.firstName} ${user.lastName}` : ""}
+          slotProps={{input: {readOnly: true}}}
+        />
         <Stack direction="row" gap={2}>
-          <Button variant="contained" type="submit">Confirm</Button>
+          <Button variant="contained" type="submit">
+            {
+              loading ?
+              <CircularProgress size="1rem" sx={{color: "white", p: "0 1.7rem"}} />
+              : 
+              "Confirm"
+            }
+          </Button>
           <Button variant="outlined" component={Link} to={`/tours/${id}`}>Cancel</Button>
         </Stack>
       </Stack>
