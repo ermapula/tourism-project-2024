@@ -607,7 +607,7 @@ export default function LocationsAdmin(params) {
         name={deleteName}
         update={fetchData}
       />
-      <Paper>
+      <Paper sx={{overflowX: "scroll"}}>
         {
           loading && 
           <CircularProgress size="5rem" 
@@ -642,7 +642,7 @@ export default function LocationsAdmin(params) {
                   <TableCell align="left">{row.address}</TableCell>
                   <TableCell align="left">
                   <Typography sx={{
-                      maxWidth: "10rem",
+                      maxWidth: "20rem",
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis"

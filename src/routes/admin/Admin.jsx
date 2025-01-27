@@ -157,7 +157,8 @@ export default function Admin(params) {
         <Box
           sx={{
             p: 2,
-            width: "100%"
+            width: "100%",
+            overflowX: "hidden"
           }}
         >
           <Outlet context={{permission: mode}} />

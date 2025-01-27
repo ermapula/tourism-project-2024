@@ -136,11 +136,11 @@ function Row(params) {
         </TableCell>
         <TableCell align="right">{row.id}</TableCell>
         <TableCell align="left">{row.title}</TableCell>
-        <TableCell align="left" >{params.getLocationsNames(row.locations)}</TableCell>
+        <TableCell align="left" >{params.getLocationsNames(row.locations).join(", ")}</TableCell>
         <TableCell align="right">&#8376;{row.price}</TableCell>
         <TableCell align="left">
           <Typography sx={{
-            maxWidth: "10rem",
+            maxWidth: "20rem",
             overflow: "hidden",
             whiteSpace: "nowrap",
             textOverflow: "ellipsis"
@@ -671,7 +671,7 @@ export default function ToursAdmin(params) {
         update={fetchData}
         setLoading={setLoading}
       />
-      <Paper>
+      <Paper sx={{overflowX: "scroll"}}>
         {
           loading && 
           <CircularProgress size="5rem" 
