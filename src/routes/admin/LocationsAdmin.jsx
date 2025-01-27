@@ -36,6 +36,7 @@ const headers = [
     disablePadding: false,
     label: "Image",
     width: "200px",
+    permissionLevel: 0,
   },
   {
     id: "id",
@@ -43,43 +44,49 @@ const headers = [
     disablePadding: false,
     label: "Id",
     width: "10px",
+    permissionLevel: 0,
   },
   {
     id: "name",
     numeric: true,
     disablePadding: false,
     label: "Name",
+    permissionLevel: 0,
   },
   {
     id: "address",
     numeric: true,
     disablePadding: false,
     label: "Address",
+    permissionLevel: 0,
   },
   {
     id: "description",
     numeric: true,
     disablePadding: false,
     label: "Description",
+    permissionLevel: 0,
   },
   {
     id: "region",
     numeric: true,
     disablePadding: false,
     label: "Region",
+    permissionLevel: 0,
   },
   {
     id: "categories",
     numeric: true,
     disablePadding: false,
     label: "Categories",
+    permissionLevel: 0,
   },
   {
     id: "actions",
     numeric: true,
     disablePadding: false,
     label: "Actions",
-    permissionNeeded: true
+    permissionLevel: 1,
   },
 ]
 
@@ -97,7 +104,7 @@ function TableHeader(params) {
         {headers.map((h) => 
         
         (
-          !h.permissionNeeded &&
+          (h.permissionLevel == 0 || h.permissionLevel == params.permission) &&
           <TableCell
             key={h.id}
             align={h.numeric ? 'right' : 'left'}
@@ -613,7 +620,7 @@ export default function LocationsAdmin(params) {
         }
         <TopToolBar />
         <Table>
-          <TableHeader />
+          <TableHeader permission={permission} />
           <TableBody>
             {data.map((row, i) => {
               
