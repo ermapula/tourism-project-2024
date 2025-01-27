@@ -129,6 +129,7 @@ function ModalEditor(params) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    params.setLoading(true)
     if(params.mode) {
       updateUser(params.userId, params.formData)
         .then(res => {
@@ -137,6 +138,9 @@ function ModalEditor(params) {
         .catch(err => {
           console.log(err)
         })
+        .finally(() => {
+          params.setLoading(false)
+        })
     } else {
       createManager(params.formData)
         .then(res => {
@@ -144,6 +148,9 @@ function ModalEditor(params) {
         })
         .catch(err => {
           console.log(err)
+        })
+        .finally(() => {
+          params.setLoading(false)
         })
       
     }
@@ -246,12 +253,16 @@ function ConfirmModal(params) {
     params.setOpen(false)
   }
   function handleSubmit() {
+    params.setLoading(true)
     deleteUser(params.id)
       .then(res => {
         params.update()
       })
       .catch(err => {
         console.log(err)
+      })
+      .finally(() => {
+        params.setLoading(false)
       })
     handleClose()
   }
@@ -323,8 +334,8 @@ export default function UsersAdmin(params) {
       .then((res) => {
         setData(res.results)
         setCount(res.count)
-        setNext(res.next ? res.next.split(":8000")[1] : null)
-        setPrev(res.previous ? res.previous.split(":8000")[1] : null)
+        setNext(res.next ? res.next : null)
+        setPrev(res.previous ? res.previous : null)
         console.log("users:", res)
       })
       .catch(err => {
@@ -381,6 +392,7 @@ export default function UsersAdmin(params) {
         setUserId={setUserId}
         formData={formData} 
         setFormData={setFormData} 
+        setLoading={setLoading}
       />
       <ConfirmModal 
         open={confirmOpen}
@@ -388,6 +400,7 @@ export default function UsersAdmin(params) {
         id={deleteId}
         email={deleteEmail}
         update={fetchData}
+        setLoading={setLoading}
       />
       <Paper>
         {
@@ -403,9 +416,7 @@ export default function UsersAdmin(params) {
         }
         <TopToolBar />
         <Table>
-          <TableHeader 
-            rowCount={data.length}
-          />
+          <TableHeader />
           <TableBody>
             {data.map((row, i) => {
               

@@ -244,8 +244,8 @@ export default function CategoriesAdmin(params) {
       .then((res) => {
         setData(res.results)
         setCount(res.count)
-        setNext(res.next ? res.next.split(":8000")[1] : null)
-        setPrev(res.previous ? res.previous.split(":8000")[1] : null)
+        setNext(res.next ? res.next : null)
+        setPrev(res.previous ? res.previous : null)
         console.log("categories", res)
       })
       .catch(err => {

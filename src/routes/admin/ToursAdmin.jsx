@@ -262,7 +262,7 @@ function ModalEditor(params) {
                   src={
                     params.formData.photo instanceof File ?
                     URL.createObjectURL(params.formData.photo) :
-                    `${baseURL}/${params.formData.photo.split(":8000")[1]}` 
+                    params.formData.photo 
                   }
                   sx={{
                     maxWidth: "50%",
@@ -461,8 +461,8 @@ export default function ToursAdmin(params) {
       .then((res) => {
         setData(res.results)
         setCount(res.count)
-        setNext(res.next ? res.next.split(":8000")[1] : null)
-        setPrev(res.previous ? res.previous.split(":8000")[1] : null)
+        setNext(res.next ? res.next : null)
+        setPrev(res.previous ? res.previous : null)
         console.log("tours:", res)
       })
       .catch(err => {
