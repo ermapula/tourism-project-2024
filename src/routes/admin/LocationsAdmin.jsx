@@ -48,35 +48,35 @@ const headers = [
   },
   {
     id: "name",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Name",
     permissionLevel: 0,
   },
   {
     id: "address",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Address",
     permissionLevel: 0,
   },
   {
     id: "description",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Description",
     permissionLevel: 0,
   },
   {
     id: "region",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Region",
     permissionLevel: 0,
   },
   {
     id: "categories",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Categories",
     permissionLevel: 0,
@@ -377,6 +377,7 @@ function ModalEditor(params) {
               multiline
               onChange={handleChange}
               required
+              maxRows={10}
             /> 
             <TextField
               select
@@ -637,11 +638,20 @@ export default function LocationsAdmin(params) {
                     }
                   </TableCell>
                   <TableCell align="right">{row.id}</TableCell>
-                  <TableCell align="right">{row.name}</TableCell>
-                  <TableCell align="right">{row.address}</TableCell>
-                  <TableCell align="right" sx={{width: "30rem"}}>{row.description}</TableCell>
-                  <TableCell align="right">{row.region}</TableCell>
-                  <TableCell align="right">{getCategoryNames(row.categories).join(", ")}</TableCell>
+                  <TableCell align="left">{row.name}</TableCell>
+                  <TableCell align="left">{row.address}</TableCell>
+                  <TableCell align="left">
+                  <Typography sx={{
+                      maxWidth: "20rem",
+                      overflow: "hidden",
+                      whiteSpace: "nowrap",
+                      textOverflow: "ellipsis"
+                    }}>
+                      {row.description}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="left">{row.region}</TableCell>
+                  <TableCell align="left">{getCategoryNames(row.categories).join(", ")}</TableCell>
                   {
                     (permission == 1) &&
                     <TableCell align="right">

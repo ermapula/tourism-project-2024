@@ -23,7 +23,7 @@ const headers = [
   },
   {
     id: "locations",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Locations",
   },
@@ -35,13 +35,13 @@ const headers = [
   },
   {
     id: "description",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Description",
   },
   {
     id: "status",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Status",
   },
@@ -53,13 +53,13 @@ const headers = [
   },
   {
     id: "start_date",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Start Date",
   },
   {
     id: "end_date",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "End Date",
   },
@@ -118,7 +118,7 @@ function Row(params) {
 
   return (
     <>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+      <TableRow sx={{ height: "1rem", '& > *': { borderBottom: 'unset' } }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -136,13 +136,22 @@ function Row(params) {
         </TableCell>
         <TableCell align="right">{row.id}</TableCell>
         <TableCell align="left">{row.title}</TableCell>
-        <TableCell align="right" >{params.getLocationsNames(row.locations)}</TableCell>
+        <TableCell align="left" >{params.getLocationsNames(row.locations)}</TableCell>
         <TableCell align="right">&#8376;{row.price}</TableCell>
-        <TableCell align="right" sx={{maxWidth: "20rem"}}>{row.description}</TableCell>
-        <TableCell align="right">{row.status}</TableCell>
+        <TableCell align="left">
+          <Typography sx={{
+            maxWidth: "20rem",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis"
+          }}>
+            {row.description}
+          </Typography>
+        </TableCell>
+        <TableCell align="left">{row.status}</TableCell>
         <TableCell align="right">{row.max_participants}</TableCell>
-        <TableCell align="right">{dayjs(row.start_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
-        <TableCell align="right">{dayjs(row.end_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
+        <TableCell align="left">{dayjs(row.start_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
+        <TableCell align="left">{dayjs(row.end_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
         <TableCell align="right">
           <Stack direction="row" justifyContent="end">
             <Button variant="contained" onClick={() => {params.handleEditOpen(row)}} sx={{marginRight: 1}}>edit</Button>
@@ -177,7 +186,7 @@ function Row(params) {
                   <TableBody>
                     {tickets.map((ticketRow) => (
                       <TableRow key={`tour-${row.id}-tickets`}>
-                        <TableCell>{ticketRow.user.name}</TableCell>
+                        <TableCell>{ticketRow.user.first_name}</TableCell>
                         <TableCell>{ticketRow.user.phone}</TableCell>
                         <TableCell>{ticketRow.user.email}</TableCell>
                         <TableCell align="right">{dayjs(ticketRow.purchase_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
@@ -341,11 +350,13 @@ function ModalEditor(params) {
             left: '50%',
             transform: 'translate(-50%, -50%)',
             width: 800,
+            maxHeight: "90vh",
             bgcolor: 'background.paper',
             boxShadow: 24,
             pt: 2,
             px: 4,
             pb: 3,
+            overflowY: "scroll",
           }}
         >
           <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
@@ -471,6 +482,8 @@ function ModalEditor(params) {
               value={params.formData.description}
               onChange={handleChange}
               required
+              multiline
+              maxRows={10}
             /> 
             <Stack direction="row" gap={2}>
               <Button variant="contained" type="submit">Confirm</Button>
@@ -562,7 +575,22 @@ export default function ToursAdmin(params) {
   const [count, setCount] = useState(0);
   const [next, setNext] = useState(null);
   const [prev, setPrev] = useState(null);
-  const [data, setData] = useState([])
+  const [data, setData] = useState([{
+    "id": 2,
+    "title": "Charyn Tour",
+    "description": "Embark on an unforgettable journey to Charyn Canyon, a natural wonder nestled in the heart of Kazakhstan. After a few hours’ drive through the arid steppe, arrive at the canyon and explore its towering rock formations shaped by time. As the guide shares stories of its history and geology, take in the dramatic landscape before descending to the Charyn River, a lush oasis amidst the dry surroundings, where you can relax and enjoy the cool, tranquil waters before heading back.",
+    "price": "7500.00",
+    "status": "available",
+    "created_at": "2025-01-27T18:44:59.034159+05:00",
+    "manager": 2,
+    "max_participants": 10,
+    "start_date": "2025-02-05T08:00:00+05:00",
+    "end_date": "2025-02-05T20:00:00+05:00",
+    "locations": [
+        2
+    ],
+    "photo": "https://tour-kz.onrender.com/media/tours/photos/dc44c450cb0a4cbfa800e664890bf5ee.jpg"
+}])
 
   const [page, setPage] = useState(0);
   const rowsPerPage = 10;
@@ -585,19 +613,19 @@ export default function ToursAdmin(params) {
       })
   }
   
-  useEffect(() => {
-    fetchData(null)
-  }, [])
+  // useEffect(() => {
+  //   fetchData(null)
+  // }, [])
   
-  useEffect(() => {
-    getLocations()
-      .then((res) => {
-        setLocations(res.results)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  }, [])
+  // useEffect(() => {
+  //   getLocations()
+  //     .then((res) => {
+  //       setLocations(res.results)
+  //     })
+  //     .catch(err => {
+  //       console.log(err)
+  //     })
+  // }, [])
 
   async function handleChangePage(e, newPage) {
     if(newPage > page && next) {

@@ -163,7 +163,7 @@ export default function Location(params) {
               {tours.map((t) => (
                 <TourCard
                   id={t.id}
-                  // image={t.image} 
+                  image={t.photo} 
                   name={t.title} 
                   nav={nav}
                   key={`tour-${t.id}`}

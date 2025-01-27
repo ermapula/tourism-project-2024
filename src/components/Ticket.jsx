@@ -25,7 +25,7 @@ export default function Ticket({ticket}) {
   return (
     <Card
       sx={{
-        backgroundColor: "#E8EBFF",
+        background: "rgba(170,241,255, 0.5)",
         borderRadius: 2,
         padding: 2
       }}
@@ -50,8 +50,9 @@ export default function Ticket({ticket}) {
       >
         <Box
           component="img"
-          src="../tours/1.jpg"
-          sx={{width: "150px", borderRadius: 2 }}
+          src={tour ? tour.photo : ""}
+          alt={`Tour image`}
+          sx={{width: "10rem", borderRadius: 2 }}
         />
         <Box>
           <Typography

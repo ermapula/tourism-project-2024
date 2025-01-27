@@ -83,7 +83,7 @@ export default function Tour(params) {
       {
         data &&
       <div className="location-header">
-        <img src={data.image} alt={`Tour ${data.title} image`} />
+        <img src={data.photo} alt={`Tour ${data.title} image`} />
         <div className="tour-text">
           <Typography variant="h4" fontWeight="bold" paddingRight="40px">
             {data.title}

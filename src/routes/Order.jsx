@@ -82,7 +82,7 @@ export default function Order(params) {
                 gap={2}
                 alignItems="center"
               >
-                {/* <Box component="img" src={tour.photo} alt="Tour image" height={100} /> */}
+                <Box component="img" src={tour.photo} alt="Tour image" height={100} />
                 <Typography flex={1}>{tour.title}</Typography>
                 <Typography width={100}>&#8376;{tour.price}</Typography>
                 
