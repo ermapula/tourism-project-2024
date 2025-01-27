@@ -1,15 +1,18 @@
 import { PersonOutline, ReceiptLongOutlined } from "@mui/icons-material";
-import { Avatar } from "@mui/material";
+import { Avatar, CircularProgress } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getProfile } from "../../api/auth";
+import { AuthContext } from "../auth/AuthContext";
 
 export default function Profile(params) {
+  const [loading, setLoading] = useState(false)
   const nav = useNavigate();
+  const {user} = useContext(AuthContext);
   const [data, setData] = useState({
     id: "",
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
   });
@@ -18,16 +21,26 @@ export default function Profile(params) {
   }, [])
 
   useEffect(() => {
-    getProfile()
-      .then((data) => {
-        setData(data);
-        console.log(data)
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      
-  }, [])
+    if(!user) {
+      setLoading(true)
+      getProfile()
+        .then((data) => {
+          setData(data);
+          console.log(data)
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+      }
+      else {
+      setLoading(true)
+      setData(user)
+      setLoading(false)
+    }
+  }, [user])
 
   return (
     <div className="profile-page">
@@ -38,7 +51,12 @@ export default function Profile(params) {
             sx={{ width: 60, height: 60}}
           />
           <div className="user-name">
-            {`${data.first_name} ${data.last_name}`}
+            {
+              loading ? 
+              <CircularProgress />
+              :
+              `${data.firstName} ${data.lastName}`
+            }
           </div>
         </div>
         <div className="profile-nav">
@@ -53,7 +71,7 @@ export default function Profile(params) {
         </div>
       </div>
       <div className="profile-main">
-        <Outlet context={{data}} />
+        <Outlet context={{data, loading, setLoading}} />
       </div>
     </div>
   ) 

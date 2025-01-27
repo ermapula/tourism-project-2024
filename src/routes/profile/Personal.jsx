@@ -1,9 +1,10 @@
-import { Avatar, Box, Button, Stack, TextField, MenuItem } from "@mui/material";
+import { Avatar, Box, Button, Stack, TextField, MenuItem, CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { updateProfile } from "../../api/auth";
 
 export default function Personal(params) {
+  const {loading, setLoading} = useOutletContext()
   useEffect(() => {
     document.title = "Profile"
   }, [])
@@ -11,14 +12,16 @@ export default function Personal(params) {
   const { data } = useOutletContext();
   const [formData, setFormData] = useState({
     id: "",
-    first_name: "",
-    last_name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     gender: "",
     phone: "",
   });
   useEffect(() => {
+    setLoading(true)
     setFormData(data);
+    setLoading(false)
   }, [data]);
 
 
@@ -41,14 +44,23 @@ export default function Personal(params) {
 
   function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true)
     console.log("Form Data:", formData);
-
-    updateProfile(formData.id, formData)
+    const form = new FormData();
+    form.append("first_name", formData.firstName)
+    form.append("last_name", formData.lastName)
+    form.append("email", formData.email)
+    form.append("phone", formData.phone)
+    form.append("gender", formData.gender)
+    updateProfile(formData.id, form)
       .then((data) => {
         console.log("Data:", data);
       })
       .catch((err) => {
         console.log(err);
+      })
+      .finally(() => {
+        setLoading(false)
       })
   }
 
@@ -64,74 +76,82 @@ export default function Personal(params) {
           gap: 2,
         }}
       >
-        <Stack
-          direction="row"
-          alignItems="center"
-          gap={5}
-        >
-          <Avatar
-            src={profilePicture}
-            alt="Profile"
-            sx={{ width: 80, height: 80 }}
-          />
-          <Button
-            variant="contained"
-            component="label"
-            sx={{ textTransform: "none" }}
-          >
-            Upload Profile Picture
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={handleProfilePictureChange}
+        {
+          loading ? 
+          <CircularProgress />
+          :
+          <>
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap={5}
+            >
+              <Avatar
+                src={profilePicture}
+                alt="Profile"
+                sx={{ width: 80, height: 80 }}
+              />
+              <Button
+                variant="contained"
+                component="label"
+                sx={{ textTransform: "none" }}
+              >
+                Upload Profile Picture
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={handleProfilePictureChange}
+                />
+              </Button>
+            </Stack>
+            <TextField
+              label="First name"
+              name="fristName"
+              value={formData.firstName}
+              onChange={handleChange}
             />
-          </Button>
-        </Stack>
-        <TextField
-          label="First name"
-          name="frist_name"
-          value={formData.first_name}
-          onChange={handleChange}
-        />
-        <TextField
-          label="Last name"
-          name="last_name"
-          value={formData.last_name}
-          onChange={handleChange}
-        />      
-        <TextField
-          label="Email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          disabled
-        />
-        <TextField
-          label="Phone Number"
-          name="phone"
-          type="tel"
-          value={formData.phone}
-          onChange={handleChange}
-        />
-        <TextField
-          select
-          name="gender"
-          label="Gender"
-          value={formData.gender || ""}
-          onChange={handleChange}
-        >
-          <MenuItem value="male">Male</MenuItem>
-          <MenuItem value="female">Female</MenuItem>
-        </TextField>
-        <Button
-          type="submit"
-          variant="contained"
-          sx={{ alignSelf: "start", mt: 2 }}
-        >
-          Save Data
-        </Button>
+            <TextField
+              label="Last name"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+            />      
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled
+            />
+            <TextField
+              label="Phone Number"
+              name="phone"
+              type="tel"
+              value={formData.phone || ""}
+              onChange={handleChange}
+            />
+            <TextField
+              select
+              name="gender"
+              label="Gender"
+              value={formData.gender || ""}
+              onChange={handleChange}
+            >
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+            </TextField>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ alignSelf: "start", mt: 2 }}
+            >
+              Save Data
+            </Button>
+          </>
+        }
+        
       </Stack>
     </>
   )

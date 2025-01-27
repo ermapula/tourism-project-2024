@@ -1,7 +1,27 @@
 import { Box, Card, Divider, Stack, Typography } from "@mui/material";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getTour } from "../api/tour";
+import { CalendarMonth } from "@mui/icons-material";
+
+function formatDate(date) {
+  return dayjs(date).format("DD MMMM, YYYY. HH:mm")
+}
 
 export default function Ticket({ticket}) {
+  const [tour, setTour] = useState(null)
+
+  useEffect(() => {
+    getTour(ticket.tour)
+      .then(res => {
+        setTour(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }, [])
+
   return (
     <Card
       sx={{
@@ -20,7 +40,7 @@ export default function Ticket({ticket}) {
         ml={3}
         sx={{color: "rgb(100, 100, 100)"}}
       >
-        {ticket.date}
+        {formatDate(ticket.purchase_date)}
       </Typography>
       <Divider sx={{marginTop: 2, marginBottom: 2}}/> 
       <Stack
@@ -36,17 +56,26 @@ export default function Ticket({ticket}) {
         <Box>
           <Typography
             variant="h5"
+            fontWeight="bold"
           >
-            Tour: {ticket.tour}
+            {tour ? tour.title : ""}
           </Typography>
           <Typography
-            variant="h5"
-          >
-            For: {ticket.name}
+            variant="h6"
+          > 
+          <CalendarMonth fontSize="1rem" sx={{marginRight: "0.5rem"}} />
+            Starts at: {tour ? formatDate(tour.start_date) : ""}
           </Typography>
+          <Typography
+            variant="h6"
+          >
+          <CalendarMonth fontSize="1rem" sx={{marginRight: "0.5rem"}} />
+            Ends at: {tour ? formatDate(tour.end_date) : ""}
+          </Typography>
+          
           <Typography
             component={Link}
-            to={`/tours/${ticket.tour_id}`}
+            to={`/tours/${ticket.tour}`}
           >
             Tour page 
           </Typography>
@@ -55,10 +84,10 @@ export default function Ticket({ticket}) {
       </Stack>
       <Divider sx={{marginTop: 2, marginBottom: 2}}/> 
       <Typography
-        variant="h6"
+        variant="p"
         sx={{placeSelf: "start"}}
       >
-        Price: &#8376;{ticket.price}
+        Price: &#8376;{tour ? tour.price : ""}
       </Typography>
     </Card>
   ) 

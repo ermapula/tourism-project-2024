@@ -1,25 +1,54 @@
-import { Stack } from "@mui/material";
+import { CircularProgress, Stack } from "@mui/material";
 import Ticket from "../../components/Ticket";
-import { useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../auth/AuthContext";
+import { getTickets } from "../../api/admin";
 
 export default function Orders(params) {
+  const [loading, setLoading] = useState(false)
+  const {user} = useContext(AuthContext);
+  const [tickets, setTickets] = useState([])
+
   useEffect(() => {
     document.title = "My orders"
   }, [])
-  const ticket = {
-    id: 0,
-    date: "2.12.2024",
-    tour: "Charyn Tour",
-    price: 8000,
-    name: "Samat",
-    tour_id: 0
-  }
+
+  useEffect(() => {
+    if(user) {
+      setLoading(true)
+      getTickets()
+        .then(res => {
+          setTickets(res.results)
+        })  
+        .catch(err => {
+          console.log(err)
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [])
   return (
     <>
-      <h1>My orders</h1>
-      <Stack gap={1}>
-        <Ticket ticket={ticket} />
-      </Stack>
+    {
+      loading ?
+      <CircularProgress />
+      :
+      tickets.length !== 0 ?
+      <>
+        <h1>My orders</h1>
+        <Stack gap={1}>
+          {
+            tickets.map(ticket => (
+              <Ticket ticket={ticket} key={`ticket-${ticket.id}`} />
+            ))
+          }
+        </Stack>
+      </>
+      :
+      <h1>You have no tickets</h1>
+
+    }
     </>
   ) 
 }
