@@ -58,7 +58,9 @@ export default function Tour(params) {
   }, [data])
 
   useEffect(() => {
-    document.title = data.title;
+    if(data){
+      document.title = data.title;
+    }
   }, [data])
 
   return (
@@ -78,6 +80,8 @@ export default function Tour(params) {
           }} 
         />
       }
+      {
+        data &&
       <div className="location-header">
         <img src={data.image} alt={`Tour ${data.title} image`} />
         <div className="tour-text">
@@ -124,6 +128,7 @@ export default function Tour(params) {
           </Button>
         </div>
       </div>
+      }
       </>
       {/* <div>
         <Comment />

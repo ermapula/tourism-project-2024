@@ -90,7 +90,7 @@ export default function Location(params) {
         <div className="location-header">
           {
             data.photo &&
-            <img src={`${baseURL}/${data.photo.split(":8000")[1]}`} alt="" />
+            <img src={data.photo} alt={`Image of ${data.name}`} />
           }
           <div className="location-text">
             <Typography variant="h4" fontWeight="bold" >{data.name}</Typography>
