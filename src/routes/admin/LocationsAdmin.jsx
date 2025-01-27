@@ -642,7 +642,7 @@ export default function LocationsAdmin(params) {
                   <TableCell align="left">{row.address}</TableCell>
                   <TableCell align="left">
                   <Typography sx={{
-                      maxWidth: "20rem",
+                      maxWidth: "10rem",
                       overflow: "hidden",
                       whiteSpace: "nowrap",
                       textOverflow: "ellipsis"
