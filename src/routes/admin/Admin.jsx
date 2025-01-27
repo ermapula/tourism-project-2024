@@ -37,11 +37,6 @@ export default function Admin(params) {
       path: "/admin/tours",
       icon: <Explore />,
     },
-    { 
-      text: "Tickets",
-      path: "/admin/tickets",
-      icon: <ReceiptLongOutlined />,
-    },
   ]
 
   const adminLinks = [
