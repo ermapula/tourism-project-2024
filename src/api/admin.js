@@ -156,3 +156,8 @@ export async function deleteTicket(id) {
   const response = await axiosPrivate.delete(`/api/tickets/${id}/`);
   return response.data;
 }
+
+export async function getTourTickets(id) {
+  const response = await axiosPrivate.get(`/api/tours/${id}/purchases/`);
+  return response.data;
+}

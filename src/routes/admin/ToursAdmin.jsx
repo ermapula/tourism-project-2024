@@ -1,7 +1,7 @@
-import { Close, CloudUpload } from "@mui/icons-material";
-import { Autocomplete, Box, Button, Chip, CircularProgress, IconButton, MenuItem, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import { Close, CloudUpload, KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import { Autocomplete, Box, Button, Chip, CircularProgress, Collapse, IconButton, MenuItem, Modal, Paper, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { createTour, deleteTour, getLocations, getTours, updateTour } from "../../api/admin";
+import { createTour, deleteTour, getLocations, getTours, getTourTickets, updateTour } from "../../api/admin";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -17,7 +17,7 @@ const headers = [
   },
   {
     id: "name",
-    numeric: true,
+    numeric: false,
     disablePadding: false,
     label: "Name",
   },
@@ -75,7 +75,8 @@ function TableHeader(params) {
   return (
     <TableHead>
       <TableRow>
-        
+        <TableCell />
+        <TableCell />
         {headers.map((h) => (
           <TableCell
             key={h.id}
@@ -91,6 +92,117 @@ function TableHeader(params) {
         ))}
       </TableRow>
     </TableHead>
+  )
+}
+
+function Row(params) {
+  const {row} = params;
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [tickets, setTickets] = useState([])
+
+  useEffect(() => {
+    setLoading(true)
+    getTourTickets(row.id)
+      .then(res => {
+        setTickets(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [])
+
+  return (
+    <>
+      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </TableCell>
+        <TableCell>
+        {
+          row.photo &&
+          <Box component="img" src={row.photo} width="150px" />
+        }
+        </TableCell>
+        <TableCell align="right">{row.id}</TableCell>
+        <TableCell align="left">{row.title}</TableCell>
+        <TableCell align="right" >{params.getLocationsNames(row.locations)}</TableCell>
+        <TableCell align="right">&#8376;{row.price}</TableCell>
+        <TableCell align="right" sx={{maxWidth: "20rem"}}>{row.description}</TableCell>
+        <TableCell align="right">{row.status}</TableCell>
+        <TableCell align="right">{row.max_participants}</TableCell>
+        <TableCell align="right">{dayjs(row.start_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
+        <TableCell align="right">{dayjs(row.end_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
+        <TableCell align="right">
+          <Stack direction="row" justifyContent="end">
+            <Button variant="contained" onClick={() => {params.handleEditOpen(row)}} sx={{marginRight: 1}}>edit</Button>
+            <Button variant="contained" onClick={() => {params.handleDelete(row.id, row.title)}} color="error">delete</Button>
+          </Stack>
+        </TableCell>
+      </TableRow>
+      <TableRow sx={{position: "relative"}}>
+        {
+          loading && open ?
+          <CircularProgress sx={{position: "absolute", top: "1rem", left: "1rem"}} />
+          :
+          tickets.length !== 0
+          ?
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={10} >
+            <Collapse in={open} timeout="auto" unmountOnExit sx={{width: "inherit"}}>
+              <Box sx={{ margin: 1}} >
+                <Typography variant="h6" gutterBottom component="div">
+                  Tickets
+                </Typography>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{fontWeight:"bold"}}>Customer name</TableCell>
+                      <TableCell sx={{fontWeight:"bold"}}>Phone number</TableCell>
+                      <TableCell sx={{fontWeight:"bold"}}>Email</TableCell>
+                      <TableCell align="right" sx={{fontWeight:"bold"}}>Purchase date</TableCell>
+                      <TableCell align="right" sx={{fontWeight:"bold"}}>Status</TableCell>
+                      <TableCell align="right" sx={{fontWeight:"bold"}}>Status changed at</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {tickets.map((ticketRow) => (
+                      <TableRow key={`tour-${row.id}-tickets`}>
+                        <TableCell>{ticketRow.user.name}</TableCell>
+                        <TableCell>{ticketRow.user.phone}</TableCell>
+                        <TableCell>{ticketRow.user.email}</TableCell>
+                        <TableCell align="right">{dayjs(ticketRow.purchase_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
+                        <TableCell align="right">{ticketRow.status}</TableCell>
+                        <TableCell align="right">{dayjs(ticketRow.status_changed_at).format("DD MMMM, YYYY. HH:mm")}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+          :
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box sx={{ margin: 1 }}>
+                <Typography variant="h6" gutterBottom component="div">
+                  No tickets
+                </Typography>
+              </Box>
+            </Collapse>
+          </TableCell>
+        }
+      </TableRow>
+    </>
   )
 }
 
@@ -183,9 +295,9 @@ function ModalEditor(params) {
     form.append("max_participants", params.formData.max_participants);
     form.append("start_date", dayjs(params.formData.start_date).toISOString());
     form.append("end_date", dayjs(params.formData.end_date).toISOString());
-    // if(params.formData.photo instanceof File) {
-    //   form.append("photo", params.formData.photo);
-    // }
+    if(params.formData.photo instanceof File) {
+      form.append("photo", params.formData.photo);
+    }
     params.formData.locations.forEach(location => {
       form.append("locations", location);
     }); 
@@ -254,7 +366,7 @@ function ModalEditor(params) {
               onChange={handleChange}
               required
             /> 
-            {/* <Box>
+            <Box>
               {
                 params.formData.photo && 
                 <Box
@@ -283,7 +395,7 @@ function ModalEditor(params) {
                   onChange={handleImageChange}
                 />
               </Button>
-            </Box> */}
+            </Box>
             {
               params.formData.locations.length !== 0 &&
               <Box>
@@ -562,32 +674,15 @@ export default function ToursAdmin(params) {
         <Table>
           <TableHeader />
           <TableBody>
-            {data.map((row, i) => {
-              
-              return (
-                <TableRow 
-                  tabIndex={-1}
-                  key={i}
-                  sx={{ '&:hover': {bgcolor: "rgb(0, 0, 0, 0.1)"} }}
-                >
-                  <TableCell align="right">{row.id}</TableCell>
-                  <TableCell align="right">{row.title}</TableCell>
-                  <TableCell align="right">{getLocationsNames(row.locations)}</TableCell>
-                  <TableCell align="right">&#8376;{row.price}</TableCell>
-                  <TableCell align="right" sx={{maxWidth: "20rem"}}>{row.description}</TableCell>
-                  <TableCell align="right">{row.status}</TableCell>
-                  <TableCell align="right">{row.max_participants}</TableCell>
-                  <TableCell align="right">{dayjs(row.start_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
-                  <TableCell align="right">{dayjs(row.end_date).format("DD MMMM, YYYY. HH:mm")}</TableCell>
-                  <TableCell align="right">
-                      <Stack direction="row" justifyContent="end">
-                        <Button variant="contained" onClick={() => {handleEditOpen(row)}} sx={{marginRight: 1}}>edit</Button>
-                        <Button variant="contained" onClick={() => {handleDelete(row.id, row.title)}} color="error">delete</Button>
-                      </Stack>
-                    </TableCell>
-                </TableRow>
-              )
-            })}
+            {data.map((row, i) => (
+              <Row 
+                key={`tour-row-${row.id}`}
+                row={row}
+                getLocationsNames={getLocationsNames}
+                handleEditOpen={handleEditOpen}
+                handleDelete={handleDelete}
+              />
+            ))}
           </TableBody>
         </Table>
         <TablePagination
