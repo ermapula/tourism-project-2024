@@ -29,14 +29,17 @@ export default function Footer(params) {
         onClose={handleClose}
       >
         <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+          <Typography id="modal-modal-title" variant="h6" component="h2" fontWeight="bold">
             About us
+          </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            This is a diploma project made by KBTU students
           </Typography>
         </Box>
       </Modal>
         <div className="footer-container">
           <div className="footer-copyright">
-            &#169; 2024
+            &#169; 2024 - 2025
           </div>
           <div>
             <Link onClick={handleOpen} style={{textDecoration: 'none'}}>About Us</Link>
